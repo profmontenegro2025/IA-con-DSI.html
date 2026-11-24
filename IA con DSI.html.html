@@ -1,0 +1,3482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="charter">
+  <title>Desarrollando la IA con DSI — El Renacimiento Económico y Social</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* 1. Charter palette tokens */
+      --background: #f7f4ec;
+      --surface-container-low: #fffdf8;
+      --surface-container: #ece5d4;
+      --surface-container-high: #e3dac4;
+
+      --on-surface: #1c1f26;
+      --on-surface-variant: #4f5360;
+
+      --outline: #b08d57;
+      --outline-variant: #d9cfb8;
+
+      --primary: #14213d;
+      --on-primary: #f7f4ec;
+      --primary-container: #e3e6ee;
+      --on-primary-container: #14213d;
+      --secondary: #2d5a4a;
+      --on-secondary: #fffdf8;
+      --secondary-container: #e4ede9;
+      --tertiary: #8a6a35;
+      --error: #9b2c2c;
+      --on-error: #f7f4ec;
+      --error-container: #f8e5e5;
+      --modal-backdrop: rgba(20, 33, 61, 0.88);
+      --brass-on-navy: #d9c5a0;
+      --lede-on-navy: #d0d4dc;
+
+      /* Data series */
+      --data-1: #14213d;
+      --data-2: #8a6a35;
+      --data-3: #2d5a4a;
+      --data-4: #5b7aa0;
+      --data-context: #c2bba9;
+
+      /* Fonts */
+      --font-headline: 'Libre Caslon Text', 'Noto Sans SC', serif;
+      --font-body: 'Inter', 'Noto Sans SC', sans-serif;
+      --font-label: 'Inter', 'Noto Sans SC', sans-serif;
+
+      /* Shape */
+      --rounded: 0.125rem;
+      --rounded-lg: 0.125rem;
+      --rounded-full: 0.125rem;
+
+      /* Style effects */
+      --brass-rule: 2px solid var(--outline);
+      --brass-band-border: 3px solid var(--outline);
+      --hairline: 1px solid var(--outline-variant);
+      --leaf-underline: 0 1px 0 var(--outline-variant);
+
+      /* 2. Shared semantic & focus tokens */
+      --positive: #2d5a4a;
+      --warning: #8a6a35;
+      --focus: #14213d;
+
+      /* Type scale (Narrative) */
+      --display-size: clamp(2.15rem, 1.4rem + 2.8vw, 3.65rem);
+      --headline-size: clamp(1.65rem, 1.2rem + 1.5vw, 2.35rem);
+      --subhead-size: clamp(1.15rem, 1.05rem + 0.45vw, 1.375rem);
+      --body-size: clamp(1rem, 0.96rem + 0.2vw, 1.09375rem);
+      --label-size: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 5.5rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+    header { position: static !important; }
+    button, input, select, textarea { font-family: inherit; }
+
+    /* Focus rings */
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+    .title-band :focus-visible,
+    .modal-shell :focus-visible {
+      outline: 2px solid var(--brass-on-navy);
+      outline-offset: 2px;
+    }
+
+    /* Utility layout */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+    .page-grid {
+      display: grid;
+      gap: var(--space-2xl);
+      padding: var(--space-xl) var(--space-lg) var(--space-3xl);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* 1. Navy Title Band */
+    .title-band {
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: var(--space-2xl) 0 var(--space-xl);
+      border-bottom: var(--brass-band-border);
+    }
+    .title-top-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-md);
+      border-bottom: 1px solid var(--outline);
+    }
+    .kicker-on-navy {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--brass-on-navy);
+      margin: 0;
+    }
+
+    /* 6-Language Selector */
+    .lang-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .lang-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--lede-on-navy);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-right: var(--space-xs);
+    }
+    .lang-btn {
+      background: transparent;
+      color: var(--on-primary);
+      border: 1px solid var(--outline);
+      border-radius: var(--rounded);
+      padding: var(--space-xs) var(--space-sm);
+      min-height: 36px;
+      font-size: var(--label-size);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+    }
+    .lang-btn:hover {
+      background: var(--surface-container-low);
+      color: var(--primary);
+    }
+    .lang-btn.active {
+      background: var(--outline);
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .title-band h1 {
+      font-family: var(--font-headline);
+      font-weight: 400;
+      font-size: var(--display-size);
+      line-height: 1.08;
+      letter-spacing: -0.01em;
+      color: var(--on-primary);
+      margin: 0 0 var(--space-md);
+      max-width: 24ch;
+    }
+    .title-band h1 em {
+      font-style: italic;
+      color: var(--brass-on-navy);
+    }
+    .title-band .lede {
+      font-size: var(--subhead-size);
+      line-height: 1.45;
+      color: var(--lede-on-navy);
+      max-width: 65ch;
+      margin: 0 0 var(--space-lg);
+    }
+    .title-meta-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: 1px solid var(--outline);
+      font-size: var(--label-size);
+      letter-spacing: 0.04em;
+      color: var(--brass-on-navy);
+    }
+    .title-meta-item strong {
+      color: var(--on-primary);
+      font-weight: 600;
+    }
+
+    /* Interactive Menu Below Title */
+    .subnav-band {
+      background: var(--surface-container-low);
+      border-bottom: var(--hairline);
+      box-shadow: var(--leaf-underline);
+    }
+    .subnav-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      padding: var(--space-sm) 0;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-sm);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--primary);
+      border-bottom-color: var(--outline);
+    }
+    .nav-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-md);
+      background: var(--primary);
+      color: var(--on-primary);
+      border: 1px solid var(--primary);
+      border-radius: var(--rounded);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .nav-cta-btn:hover {
+      background: var(--on-surface);
+    }
+
+    /* Section Headings */
+    .section-block {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      scroll-margin-top: var(--space-lg);
+    }
+    .section-head {
+      border-top: var(--brass-rule);
+      padding-top: var(--space-md);
+      border-bottom: var(--hairline);
+      padding-bottom: var(--space-sm);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-sm);
+    }
+    .section-kicker {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--tertiary);
+      margin: 0 0 var(--space-xs);
+    }
+    .section-head h2 {
+      font-family: var(--font-headline);
+      font-weight: 400;
+      font-size: var(--headline-size);
+      line-height: 1.15;
+      color: var(--on-surface);
+      margin: 0;
+    }
+    .section-sub {
+      max-width: 65ch;
+      color: var(--on-surface-variant);
+      margin: 0;
+    }
+
+    /* Asymmetric Editorial Grid */
+    .editorial-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+    .prose-col p {
+      margin: 0 0 var(--space-md);
+      max-width: 65ch;
+    }
+    .prose-col p:last-child { margin-bottom: 0; }
+
+    /* Figure Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+      gap: var(--space-lg);
+    }
+    .figure-card {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      border-left: var(--hairline);
+      border-right: var(--hairline);
+      box-shadow: var(--leaf-underline);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .figure-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--on-surface-variant);
+    }
+    .figure-value {
+      font-family: var(--font-headline);
+      font-weight: 400;
+      font-size: clamp(1.75rem, 1.4rem + 1vw, 2.25rem);
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums lining-nums;
+      color: var(--on-surface);
+    }
+    .figure-delta {
+      font-size: var(--label-size);
+      font-weight: 600;
+      color: var(--tertiary);
+    }
+    .figure-delta.positive { color: var(--secondary); }
+    .figure-delta.negative { color: var(--error); }
+
+    /* Tags (squared stamps) */
+    .stamp-tag {
+      display: inline-block;
+      border: 1px solid var(--outline);
+      background: transparent;
+      color: var(--tertiary);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--rounded);
+    }
+
+    /* Principles Interactive Explorer */
+    .principles-shell {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .principle-list {
+      display: flex;
+      flex-direction: column;
+      border-top: var(--hairline);
+    }
+    .principle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      width: 100%;
+      min-height: 48px;
+      padding: var(--space-sm) var(--space-md);
+      background: transparent;
+      border: none;
+      border-bottom: var(--hairline);
+      border-left: 3px solid transparent;
+      text-align: left;
+      cursor: pointer;
+      color: var(--on-surface);
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .principle-btn:hover {
+      background: var(--surface-container-low);
+    }
+    .principle-btn.active {
+      background: var(--primary-container);
+      border-left-color: var(--primary);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .principle-idx {
+      font-variant-numeric: tabular-nums;
+      color: var(--tertiary);
+      font-size: var(--label-size);
+      font-weight: 600;
+      margin-right: var(--space-sm);
+    }
+    .principle-detail {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      border-left: var(--hairline);
+      border-right: var(--hairline);
+      box-shadow: var(--leaf-underline);
+      padding: var(--space-lg);
+    }
+    .principle-detail h3 {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: var(--subhead-size);
+      margin: var(--space-sm) 0;
+      color: var(--primary);
+    }
+    .principle-quote {
+      margin: var(--space-md) 0 0;
+      padding: var(--space-sm) var(--space-md);
+      border-left: var(--brass-rule);
+      background: var(--background);
+      font-style: italic;
+      color: var(--on-surface-variant);
+    }
+
+    /* Dual Scheme Simulator (50 / 20 / 30) */
+    .simulator-panel {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      border-left: var(--hairline);
+      border-right: var(--hairline);
+      box-shadow: var(--leaf-underline);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+    .controls-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+      gap: var(--space-lg);
+      align-items: end;
+      padding-bottom: var(--space-md);
+      border-bottom: var(--hairline);
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .field-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+    }
+    .field-inputs {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .field-inputs input[type="range"] {
+      flex: 1;
+      accent-color: var(--primary);
+      min-height: 44px;
+      cursor: pointer;
+    }
+    .num-input {
+      width: 96px;
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      color: var(--on-surface);
+      font-size: 0.95rem;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      background: var(--primary);
+      color: var(--on-primary);
+      border: 1px solid var(--primary);
+      border-radius: var(--rounded);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .btn-primary:hover { background: var(--on-surface); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      border-radius: var(--rounded);
+      font-size: var(--label-size);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .btn-secondary:hover,
+    .btn-secondary.active {
+      background: var(--primary-container);
+      font-weight: 600;
+    }
+
+    /* Dual Bar Visualization */
+    .dual-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .dual-bar-track {
+      display: flex;
+      width: 100%;
+      height: 44px;
+      border: var(--hairline);
+      border-radius: var(--rounded);
+      overflow: hidden;
+    }
+    .dual-seg-social {
+      width: 50%;
+      background: var(--secondary);
+      color: var(--on-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--label-size);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      padding: 0 var(--space-xs);
+    }
+    .dual-seg-investor {
+      width: 20%;
+      background: var(--tertiary);
+      color: var(--on-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--label-size);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      padding: 0 var(--space-xs);
+    }
+    .dual-seg-market {
+      width: 30%;
+      background: var(--primary);
+      color: var(--on-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--label-size);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      padding: 0 var(--space-xs);
+    }
+
+    /* Charter Table */
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .charter-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9375rem;
+    }
+    .charter-table thead th {
+      background: var(--surface-container-high);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface);
+      text-align: left;
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--brass-rule);
+    }
+    .charter-table tbody td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--hairline);
+      vertical-align: top;
+    }
+    .charter-table tfoot td {
+      padding: var(--space-sm) var(--space-md);
+      border-top: var(--brass-rule);
+      font-weight: 700;
+      background: var(--surface-container);
+    }
+    .num-col {
+      text-align: right !important;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    /* Infographic Gallery Grid */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      align-items: center;
+    }
+    .plates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+      gap: var(--space-lg);
+    }
+    .plate-card {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      border-left: var(--hairline);
+      border-right: var(--hairline);
+      box-shadow: var(--leaf-underline);
+      border-radius: var(--rounded-lg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform var(--dur-short) var(--ease-out);
+    }
+    .plate-card:hover {
+      transform: translateY(-2px);
+    }
+    .plate-preview-btn {
+      display: block;
+      width: 100%;
+      padding: var(--space-md);
+      background: var(--background);
+      border: none;
+      border-bottom: var(--hairline);
+      cursor: zoom-in;
+      text-align: left;
+    }
+    .plate-svg-box {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-container-low);
+      border: var(--hairline);
+      overflow: hidden;
+    }
+    .plate-svg-box svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .plate-body {
+      padding: var(--space-md) var(--space-lg) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      flex: 1;
+    }
+    .plate-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .plate-title {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: 1.125rem;
+      line-height: 1.25;
+      margin: 0;
+      color: var(--primary);
+    }
+    .plate-desc {
+      margin: 0;
+      font-size: 0.9375rem;
+      color: var(--on-surface-variant);
+      flex: 1;
+    }
+    .plate-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      padding-top: var(--space-sm);
+      border-top: var(--hairline);
+    }
+
+    /* Purchase & QR Section */
+    .purchase-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.5fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+    .book-cover-card {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      border-left: var(--hairline);
+      border-right: var(--hairline);
+      box-shadow: var(--leaf-underline);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .cover-svg-frame {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      border: 1px solid var(--outline);
+      background: var(--primary);
+    }
+    .cover-svg-frame svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+      gap: var(--space-lg);
+    }
+    .qr-card {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      border-left: var(--hairline);
+      border-right: var(--hairline);
+      box-shadow: var(--leaf-underline);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .qr-matrix-btn {
+      background: var(--surface-container-low);
+      border: var(--hairline);
+      padding: var(--space-md);
+      cursor: zoom-in;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qr-matrix-btn svg {
+      width: 156px;
+      height: 156px;
+      display: block;
+    }
+    .qr-ref-box {
+      background: var(--background);
+      border: var(--hairline);
+      padding: var(--space-xs) var(--space-sm);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      word-break: break-word;
+    }
+    .copy-feedback {
+      font-size: var(--label-size);
+      font-weight: 600;
+      color: var(--secondary);
+      min-height: 1.2em;
+    }
+
+    /* Diffusion Section (after Purchase) */
+    .diffusion-panel {
+      background: var(--surface-container);
+      border-top: var(--brass-rule);
+      border-bottom: var(--brass-rule);
+      padding: var(--space-xl);
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+    .diffusion-quote {
+      font-family: var(--font-headline);
+      font-style: italic;
+      font-size: var(--subhead-size);
+      color: var(--primary);
+      border-left: var(--brass-rule);
+      padding-left: var(--space-md);
+      margin: var(--space-md) 0;
+    }
+    .pledge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+      gap: var(--space-sm);
+      margin: var(--space-md) 0;
+    }
+    .pledge-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      color: var(--on-surface);
+      font-size: var(--label-size);
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .pledge-btn.selected {
+      background: var(--secondary-container);
+      border-color: var(--secondary);
+      color: var(--secondary);
+      font-weight: 600;
+    }
+
+    /* Fullscreen Modal Viewer */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: var(--modal-backdrop);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-md);
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-shell {
+      width: 100%;
+      max-width: 1240px;
+      height: 92vh;
+      background: var(--surface-container-low);
+      border-top: 3px solid var(--outline);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-toolbar {
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: var(--space-sm) var(--space-lg);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      border-bottom: var(--brass-rule);
+    }
+    .modal-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .modal-kicker {
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--brass-on-navy);
+    }
+    .modal-heading {
+      font-family: var(--font-headline);
+      font-size: 1.25rem;
+      margin: 0;
+      color: var(--on-primary);
+      font-weight: 400;
+    }
+    .modal-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .modal-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 40px;
+      padding: var(--space-xs) var(--space-sm);
+      background: transparent;
+      color: var(--on-primary);
+      border: 1px solid var(--outline);
+      border-radius: var(--rounded);
+      font-size: var(--label-size);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .modal-btn:hover,
+    .modal-btn.active {
+      background: var(--outline);
+      color: var(--primary);
+    }
+    .modal-body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 0.85fr);
+      min-height: 0;
+      overflow: hidden;
+    }
+    .modal-stage {
+      background: var(--background);
+      overflow: auto;
+      padding: var(--space-lg);
+      display: flex;
+      border-right: var(--hairline);
+    }
+    .modal-canvas {
+      width: 100%;
+      max-width: 920px;
+      margin: auto;
+      flex: 0 0 auto;
+      background: var(--surface-container-low);
+      border: var(--hairline);
+      padding: var(--space-md);
+      transition: width var(--dur-short) var(--ease-out), max-width var(--dur-short) var(--ease-out);
+    }
+    .modal-canvas svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .modal-notes {
+      padding: var(--space-lg);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .modal-notes h4 {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      margin: 0;
+      color: var(--primary);
+    }
+    .modal-points {
+      margin: 0;
+      padding-left: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      color: var(--on-surface-variant);
+      font-size: 0.9375rem;
+    }
+
+    /* Footer */
+    .site-footer {
+      border-top: var(--brass-rule);
+      background: var(--surface-container-low);
+      padding: var(--space-xl) 0;
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+    }
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .editorial-split,
+      .principles-shell,
+      .purchase-layout,
+      .diffusion-panel,
+      .modal-body {
+        grid-template-columns: 1fr;
+      }
+      .modal-stage {
+        border-right: none;
+        border-bottom: var(--hairline);
+        max-height: 55vh;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container, .page-grid { padding-left: var(--space-md); padding-right: var(--space-md); }
+      .title-band { padding: var(--space-xl) 0 var(--space-lg); }
+      .diffusion-panel { padding: var(--space-md); }
+      .dual-bar-track { height: 52px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVY TITLE BAND -->
+  <header class="title-band" id="top">
+    <div class="container">
+      <div class="title-top-row">
+        <p class="kicker-on-navy" data-i18n="kicker">Tratado Socioeconómico · Era 4.0 · Edición 2026</p>
+        <div class="lang-bar" role="group" aria-label="Selector de idioma">
+          <span class="lang-label" data-i18n="langLabel">Idioma:</span>
+          <button type="button" class="lang-btn active" data-lang="es" onclick="setLanguage('es')">ES · Español</button>
+          <button type="button" class="lang-btn" data-lang="en" onclick="setLanguage('en')">EN · English</button>
+          <button type="button" class="lang-btn" data-lang="it" onclick="setLanguage('it')">IT · Italiano</button>
+          <button type="button" class="lang-btn" data-lang="de" onclick="setLanguage('de')">DE · Deutsch</button>
+          <button type="button" class="lang-btn" data-lang="ru" onclick="setLanguage('ru')">RU · Русский</button>
+          <button type="button" class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">ZH · 中文</button>
+        </div>
+      </div>
+
+      <h1 id="hero-title">Desarrollando la IA con DSI: <em>El Renacimiento Económico y Social</em></h1>
+      <p class="lede" id="hero-lede">Un nuevo paradigma socioeconómico en la era 4.0: cómo la Doctrina Social de la Iglesia Católica orienta la Inteligencia Artificial y la robótica desde el Estado Municipal hacia el bien común, la dignidad del trabajo y la fraternidad.</p>
+
+      <div class="title-meta-grid">
+        <div class="title-meta-item"><span data-i18n="authorLabel">Autor:</span> <strong>C. P. N. y Docente Ariel Ivan Montenegro</strong></div>
+        <div class="title-meta-item"><span data-i18n="editionLabel">Edición:</span> <strong>2026 · 10 Láminas HD Interactivas</strong></div>
+        <div class="title-meta-item"><span data-i18n="scopeLabel">Eje Territorial:</span> <strong data-i18n="scopeValue">Estado Municipal, Comunas y Tercer Sector</strong></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- INTERACTIVE MENU AFTER TITLE -->
+  <nav class="subnav-band" aria-label="Navegación principal">
+    <div class="container subnav-inner">
+      <ul class="nav-links">
+        <li><a class="nav-link active" href="#diagnostico" data-i18n="navDiag">I. Diagnóstico 4.0</a></li>
+        <li><a class="nav-link" href="#principios" data-i18n="navPrin">II. Principios DSI</a></li>
+        <li><a class="nav-link" href="#esquema-dual" data-i18n="navDual">III. Esquema Dual</a></li>
+        <li><a class="nav-link" href="#laminas" data-i18n="navPlates">IV. Láminas HD</a></li>
+        <li><a class="nav-link" href="#trabajo-democracia" data-i18n="navWork">V. Gremios y Web 3.0</a></li>
+        <li><a class="nav-link" href="#adquirir" data-i18n="navBuy">VI. Adquirir y QR</a></li>
+        <li><a class="nav-link" href="#difusion" data-i18n="navDiff">VII. Difusión</a></li>
+      </ul>
+      <button type="button" class="nav-cta-btn" onclick="openPlateModal(0)">
+        <i data-lucide="maximize-2" aria-hidden="true"></i>
+        <span data-i18n="openAtlasBtn">Abrir Visor HD</span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="page-grid">
+
+    <!-- SECTION I: DIAGNÓSTICO -->
+    <section id="diagnostico" class="section-block">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker" data-i18n="sec1Kicker">Capítulo I · Problemática Actual</p>
+          <h2 data-i18n="sec1Title">La aceleración exponencial exige un marco ético previo a la técnica</h2>
+        </div>
+        <span class="stamp-tag" data-i18n="sec1Tag">Ley de Rendimientos Acelerados</span>
+      </div>
+
+      <div class="editorial-split">
+        <div class="prose-col">
+          <p data-i18n="sec1P1">En la Cuarta Revolución Industrial, la Inteligencia Artificial y la robótica crecen a ritmo exponencial, mientras las sociedades se adaptan con rezago. Cuando las instituciones solo reaccionan, la tecnología termina moldeando la cultura, la economía y el trabajo, subordinando al ser humano a la eficiencia.</p>
+          <p data-i18n="sec1P2">El modelo «First AI» (reemplazar todo puesto automatizable para abaratar costos) oculta una falla sistémica: al generar despidos masivos, destruye el ingreso laboral que sostiene la demanda agregada, cae el consumo de las empresas y se desfinancia el sistema previsional ante una natalidad en descenso.</p>
+        </div>
+        <div class="card-grid">
+          <article class="figure-card">
+            <span class="figure-label" data-i18n="kpi1Label">Asimetría de cambio</span>
+            <span class="figure-value" data-i18n="kpi1Val">Exponencial</span>
+            <span class="figure-delta negative" data-i18n="kpi1Delta">La técnica supera la adaptación social</span>
+          </article>
+          <article class="figure-card">
+            <span class="figure-label" data-i18n="kpi2Label">Punto de inflexión DSI</span>
+            <span class="figure-value" data-i18n="kpi2Val">1891–2026</span>
+            <span class="figure-delta positive" data-i18n="kpi2Delta">De León XIII a Magnifica Humanitas</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION II: PRINCIPIOS DE LA DSI -->
+    <section id="principios" class="section-block">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker" data-i18n="sec2Kicker">Capítulo II · Reserva Moral y Ética</p>
+          <h2 data-i18n="sec2Title">Principios rectores de la Doctrina Social de la Iglesia para la Era 4.0</h2>
+        </div>
+        <span class="stamp-tag" data-i18n="sec2Tag">Explorador de Principios</span>
+      </div>
+
+      <div class="principles-shell">
+        <div class="principle-list" id="principle-list" role="tablist" aria-label="Principios de la DSI"></div>
+        <article class="principle-detail" id="principle-detail" aria-live="polite"></article>
+      </div>
+    </section>
+
+    <!-- SECTION III: ESQUEMA DUAL EXACTO (50% $110 / 20% $155 / 30% $200) -->
+    <section id="esquema-dual" class="section-block">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker" data-i18n="sec3Kicker">Capítulo III · Modelo de Producción Municipal</p>
+          <h2 data-i18n="sec3Title">Esquema Dual de Precios y Distribución: 50% a $110 · 20% a $155 · 30% a $200</h2>
+        </div>
+        <span class="stamp-tag" data-i18n="sec3Tag">Simulador Interactivo</span>
+      </div>
+
+      <p class="section-sub" data-i18n="sec3Desc">Para garantizar bienes de primera necesidad sin destruir la sostenibilidad financiera, la unidad productiva coordinada por el Estado Municipal o una OSFL divide su producción en tres cupos precisos sobre una estructura base de $100 de costo + 10% de reservas solidarias (5% trabajador + 5% fondo de inversión en cadena).</p>
+
+      <div class="simulator-panel">
+        <div class="controls-row">
+          <div class="field-group">
+            <label class="field-label" for="slider-units" data-i18n="simUnitsLabel">Producción Mensual (Unidades)</label>
+            <div class="field-inputs">
+              <input type="range" id="slider-units" min="1000" max="50000" step="500" value="10000" oninput="syncUnitsFromSlider(this.value)">
+              <input type="number" id="input-units" class="num-input" min="1000" max="50000" step="500" value="10000" oninput="syncUnitsFromNumber(this.value)">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="slider-cost" data-i18n="simCostLabel">Costo Unitario Base ($)</label>
+            <div class="field-inputs">
+              <input type="range" id="slider-cost" min="50" max="300" step="5" value="100" oninput="syncCostFromSlider(this.value)">
+              <input type="number" id="input-cost" class="num-input" min="50" max="300" step="5" value="100" oninput="syncCostFromNumber(this.value)">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <span class="field-label" data-i18n="simPresetsLabel">Escenarios de Referencia</span>
+            <div class="preset-row">
+              <button type="button" class="btn-secondary" onclick="applyDualPreset(10000, 100)" data-i18n="presetRef">Base Libro ($110 / $155 / $200)</button>
+              <button type="button" class="btn-secondary" onclick="applyDualPreset(25000, 100)" data-i18n="presetMed">Municipio Medio (25k u.)</button>
+              <button type="button" class="btn-secondary" onclick="applyDualPreset(50000, 100)" data-i18n="presetReg">Consorcio Comunal (50k u.)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Proportional Bar -->
+        <div class="dual-bar-wrap">
+          <div class="dual-bar-track" aria-label="Distribución porcentual 50%, 20%, 30%">
+            <div class="dual-seg-social" id="bar-social">50% · $110</div>
+            <div class="dual-seg-investor" id="bar-investor">20% · $155</div>
+            <div class="dual-seg-market" id="bar-market">30% · $200</div>
+          </div>
+        </div>
+
+        <!-- Exact KPI Cards -->
+        <div class="card-grid">
+          <article class="figure-card">
+            <span class="figure-label" data-i18n="dualKpi1Label">50% Social General</span>
+            <span class="figure-value" id="val-p1">$110</span>
+            <span class="figure-delta positive" id="sub-p1">5.000 u. · Costo + 10% reservas</span>
+          </article>
+          <article class="figure-card">
+            <span class="figure-label" data-i18n="dualKpi2Label">20% Cupo Preferencial Inversor</span>
+            <span class="figure-value" id="val-p2">$155</span>
+            <span class="figure-delta" id="sub-p2">2.000 u. · Acceso preferencial municipal</span>
+          </article>
+          <article class="figure-card">
+            <span class="figure-label" data-i18n="dualKpi3Label">30% Mercado Abierto</span>
+            <span class="figure-value" id="val-p3">$200</span>
+            <span class="figure-delta" id="sub-p3">3.000 u. · Retorno pleno al inversor</span>
+          </article>
+          <article class="figure-card">
+            <span class="figure-label" data-i18n="dualKpi4Label">Ahorro Social Liberado</span>
+            <span class="figure-value" id="val-savings">$540.000</span>
+            <span class="figure-delta positive" id="sub-savings">Excedente que reactiva la demanda</span>
+          </article>
+        </div>
+
+        <!-- Exact Breakdown Table -->
+        <div class="table-scroll">
+          <table class="charter-table">
+            <thead>
+              <tr>
+                <th data-i18n="tblTier">Tramo de Distribución</th>
+                <th class="num-col" data-i18n="tblShare">Cuota</th>
+                <th class="num-col" data-i18n="tblUnits">Unidades</th>
+                <th class="num-col" data-i18n="tblPrice">Precio Unitario</th>
+                <th class="num-col" data-i18n="tblRevenue">Facturación</th>
+                <th data-i18n="tblPurpose">Función en el Modelo</th>
+              </tr>
+            </thead>
+            <tbody id="dual-table-body"></tbody>
+            <tfoot id="dual-table-foot"></tfoot>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION IV: GALERÍA DE LÁMINAS HD -->
+    <section id="laminas" class="section-block">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker" data-i18n="sec4Kicker">Capítulo IV · Atlas Visual del Libro</p>
+          <h2 data-i18n="sec4Title">Láminas e Infografías Conceptuales en Alta Definición</h2>
+        </div>
+        <span class="stamp-tag" data-i18n="sec4Tag">Clic para ampliar a pantalla completa</span>
+      </div>
+
+      <div class="filter-bar" role="group" aria-label="Filtrar láminas por categoría">
+        <button type="button" class="btn-secondary active" data-cat="all" onclick="filterPlates('all')" data-i18n="catAll">Todas (10)</button>
+        <button type="button" class="btn-secondary" data-cat="fundamentos" onclick="filterPlates('fundamentos')" data-i18n="catFund">Fundamentos DSI</button>
+        <button type="button" class="btn-secondary" data-cat="economia" onclick="filterPlates('economia')" data-i18n="catEcon">Modelo Económico</button>
+        <button type="button" class="btn-secondary" data-cat="trabajo" onclick="filterPlates('trabajo')" data-i18n="catWork">Trabajo y Gremios</button>
+        <button type="button" class="btn-secondary" data-cat="gobernanza" onclick="filterPlates('gobernanza')" data-i18n="catGov">Gobernanza y Futuro</button>
+      </div>
+
+      <div class="plates-grid" id="plates-grid"></div>
+    </section>
+
+    <!-- SECTION V: GREMIOS 4.0 Y DEMOCRACIA DIRECTA WEB 3.0 -->
+    <section id="trabajo-democracia" class="section-block">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker" data-i18n="sec5Kicker">Capítulo V · Trabajo, Capullo y Democracia</p>
+          <h2 data-i18n="sec5Title">Del «Gremio de Competencias Humanas» a la Democracia Directa Web 3.0</h2>
+        </div>
+        <span class="stamp-tag" data-i18n="sec5Tag">Art. 14 Ter &amp; Foros Comunales</span>
+      </div>
+
+      <div class="card-grid">
+        <article class="figure-card">
+          <span class="figure-label" data-i18n="pillar1Label">Factor Trabajo · Modalidad IA</span>
+          <span class="figure-value" data-i18n="pillar1Val">Robot + Humano</span>
+          <p class="plate-desc" data-i18n="pillar1Desc">El trabajador desplazado presta sus servicios mediante una unidad de IA y robótica conservando salario, derechos laborales y mayor tiempo libre para su familia y formación.</p>
+        </article>
+        <article class="figure-card">
+          <span class="figure-label" data-i18n="pillar2Label">Quinto Factor Productivo</span>
+          <span class="figure-value" data-i18n="pillar2Val">El Capullo DSI</span>
+          <p class="plate-desc" data-i18n="pillar2Desc">Tierra municipal gratuita por 3 años, infraestructura móvil al 5% máx., pasantías (70% universitarios / 30% vecinos con 90% de aprobación) y app de gestión guiada por la DSI.</p>
+        </article>
+        <article class="figure-card">
+          <span class="figure-label" data-i18n="pillar3Label">Democracia Directa</span>
+          <span class="figure-value" data-i18n="pillar3Val">Foros Web 3.0</span>
+          <p class="plate-desc" data-i18n="pillar3Desc">Se votan propuestas y no candidatos: al alcanzar el 70% del padrón municipal se impulsan ordenanzas y prioridades presupuestarias, guiadas por las 4 Virtudes Cardinales.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION VI: SECCIÓN DE COMPRA PREVIA AL BLOQUE DE DIFUSIÓN -->
+    <section id="adquirir" class="section-block">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker" data-i18n="sec6Kicker">Capítulo VI · Adquirir la Obra y Canales</p>
+          <h2 data-i18n="sec6Title">Acceso al Libro en Amazon y Canal Oficial de YouTube</h2>
+        </div>
+        <span class="stamp-tag" data-i18n="sec6Tag">Códigos QR Verificados</span>
+      </div>
+
+      <div class="purchase-layout">
+        <aside class="book-cover-card">
+          <div class="cover-svg-frame" id="book-cover-mount"></div>
+          <h3 class="plate-title" data-i18n="bookTitleShort">Desarrollando la IA con DSI</h3>
+          <p class="plate-desc" data-i18n="bookSummary">Obra completa de C. P. N. y Docente Ariel Ivan Montenegro (Edición 2026). Incluye el desarrollo teórico, el marco de Magnifica Humanitas, la ingeniería municipal del Esquema Dual y las bases de la democracia directa.</p>
+          <button type="button" class="btn-primary" onclick="openPlateModal(10)">
+            <i data-lucide="book-open" aria-hidden="true"></i>
+            <span data-i18n="viewCoverBtn">Ampliar Portada HD</span>
+          </button>
+        </aside>
+
+        <div class="qr-grid" id="qr-grid"></div>
+      </div>
+    </section>
+
+    <!-- SECTION VII: BLOQUE DE DIFUSIÓN (INMEDIATAMENTE POSTERIOR A COMPRA) -->
+    <section id="difusion" class="section-block">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker" data-i18n="sec7Kicker">Capítulo VII · Palabra Final y Compromiso</p>
+          <h2 data-i18n="sec7Title">Un llamado compartido a multiplicar esta hoja de ruta territorial</h2>
+        </div>
+        <span class="stamp-tag" data-i18n="sec7Tag">Tapa Trasera del Libro</span>
+      </div>
+
+      <div class="diffusion-panel">
+        <div>
+          <p data-i18n="diffText1">Cada cambio histórico profundo comienza cuando un ciudadano, un docente, un trabajador, un empresario o un dirigente municipal decide no resignarse a que la técnica reemplace al alma humana.</p>
+          <blockquote class="diffusion-quote" data-i18n="diffQuote">«Nadie puede salvarse solo: construir una economía con rostro humano es una obra que nos une a todos.» — C. P. N. y Docente Ariel Ivan Montenegro (Edición 2026)</blockquote>
+          <p data-i18n="diffText2">Su colaboración multiplicando este mensaje fortalece el anhelo de una sociedad donde nadie quede excluido, donde el trabajo conserve su dignidad y la Inteligencia Artificial sirva verdaderamente al bien común.</p>
+        </div>
+
+        <div>
+          <p class="field-label" data-i18n="pledgeTitle">Seleccione los ámbitos donde difundirá la propuesta:</p>
+          <div class="pledge-grid" id="pledge-grid"></div>
+          <div class="plate-actions">
+            <button type="button" class="btn-primary" onclick="copyDiffusionMessage()">
+              <i data-lucide="share-2" aria-hidden="true"></i>
+              <span data-i18n="copyManifestoBtn">Copiar mensaje de difusión</span>
+            </button>
+            <span class="copy-feedback" id="diffusion-feedback" aria-live="polite"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong data-i18n="footerTitle">Desarrollando la IA con DSI: El Renacimiento Económico y Social</strong> ·
+        <span data-i18n="footerRights">Autor: C. P. N. y Docente Ariel Ivan Montenegro · Edición 2026</span>
+      </div>
+      <div data-i18n="footerSources">Basado en el texto íntegro del libro, láminas conceptuales, tapa trasera y recursos QR oficiales.</div>
+    </div>
+  </footer>
+
+  <!-- FULLSCREEN MODAL VIEWER -->
+  <div class="modal-backdrop" id="plate-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-shell">
+      <div class="modal-toolbar">
+        <div class="modal-title-group">
+          <span class="modal-kicker" id="modal-kicker">Lámina 01</span>
+          <h3 class="modal-heading" id="modal-title">Título de la lámina</h3>
+        </div>
+        <div class="modal-controls">
+          <button type="button" class="modal-btn" id="zoom-100" onclick="setModalZoom(1)">100%</button>
+          <button type="button" class="modal-btn" id="zoom-135" onclick="setModalZoom(1.35)">135%</button>
+          <button type="button" class="modal-btn" id="zoom-175" onclick="setModalZoom(1.75)">175%</button>
+          <button type="button" class="modal-btn" onclick="stepModal(-1)" aria-label="Anterior">
+            <i data-lucide="chevron-left" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="modal-btn" onclick="stepModal(1)" aria-label="Siguiente">
+            <i data-lucide="chevron-right" aria-hidden="true"></i>
+          </button>
+          <button type="button" class="modal-btn" onclick="closePlateModal()">
+            <i data-lucide="x" aria-hidden="true"></i>
+            <span data-i18n="closeBtn">Cerrar</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-stage">
+          <div class="modal-canvas" id="modal-canvas"></div>
+        </div>
+        <aside class="modal-notes">
+          <span class="stamp-tag" id="modal-cat-tag">Categoría</span>
+          <h4 data-i18n="modalSummaryHead">Claves conceptuales de la lámina</h4>
+          <p id="modal-desc"></p>
+          <ul class="modal-points" id="modal-points"></ul>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STATE = {
+      lang: `es`,
+      category: `all`,
+      activePrinciple: 0,
+      units: 10000,
+      cost: 100,
+      modalIndex: 0,
+      zoom: 1,
+      pledges: [`Familias`, `Universidades`]
+    };
+
+    const I18N = {
+      es: {
+        kicker: `Tratado Socioeconómico · Era 4.0 · Edición 2026`,
+        langLabel: `Idioma:`,
+        heroTitle: `Desarrollando la IA con DSI: <em>El Renacimiento Económico y Social</em>`,
+        heroLede: `Un nuevo paradigma socioeconómico en la era 4.0: cómo la Doctrina Social de la Iglesia Católica orienta la Inteligencia Artificial y la robótica desde el Estado Municipal hacia el bien común, la dignidad del trabajo y la fraternidad.`,
+        authorLabel: `Autor:`,
+        editionLabel: `Edición:`,
+        scopeLabel: `Eje Territorial:`,
+        scopeValue: `Estado Municipal, Comunas y Tercer Sector`,
+        navDiag: `I. Diagnóstico 4.0`,
+        navPrin: `II. Principios DSI`,
+        navDual: `III. Esquema Dual`,
+        navPlates: `IV. Láminas HD`,
+        navWork: `V. Gremios y Web 3.0`,
+        navBuy: `VI. Adquirir y QR`,
+        navDiff: `VII. Difusión`,
+        openAtlasBtn: `Abrir Visor HD`,
+        sec1Kicker: `Capítulo I · Problemática Actual`,
+        sec1Title: `La aceleración exponencial exige un marco ético previo a la técnica`,
+        sec1Tag: `Ley de Rendimientos Acelerados`,
+        sec1P1: `En la Cuarta Revolución Industrial, la Inteligencia Artificial y la robótica crecen a ritmo exponencial, mientras las sociedades se adaptan con rezago. Cuando las instituciones solo reaccionan, la tecnología termina moldeando la cultura, la economía y el trabajo, subordinando al ser humano a la eficiencia.`,
+        sec1P2: `El modelo «First AI» (reemplazar todo puesto automatizable para abaratar costos) oculta una falla sistémica: al generar despidos masivos, destruye el ingreso laboral que sostiene la demanda agregada, cae el consumo de las empresas y se desfinancia el sistema previsional ante una natalidad en descenso.`,
+        kpi1Label: `Asimetría de cambio`,
+        kpi1Val: `Exponencial`,
+        kpi1Delta: `La técnica supera la adaptación social`,
+        kpi2Label: `Punto de inflexión DSI`,
+        kpi2Val: `1891–2026`,
+        kpi2Delta: `De León XIII a Magnifica Humanitas`,
+        sec2Kicker: `Capítulo II · Reserva Moral y Ética`,
+        sec2Title: `Principios rectores de la Doctrina Social de la Iglesia para la Era 4.0`,
+        sec2Tag: `Explorador de Principios`,
+        sec3Kicker: `Capítulo III · Modelo de Producción Municipal`,
+        sec3Title: `Esquema Dual de Precios y Distribución: 50% a $110 · 20% a $155 · 30% a $200`,
+        sec3Tag: `Simulador Interactivo`,
+        sec3Desc: `Para garantizar bienes de primera necesidad sin destruir la sostenibilidad financiera, la unidad productiva coordinada por el Estado Municipal o una OSFL divide su producción en tres cupos precisos sobre una estructura base de $100 de costo + 10% de reservas solidarias (5% trabajador + 5% fondo de inversión en cadena).`,
+        simUnitsLabel: `Producción Mensual (Unidades)`,
+        simCostLabel: `Costo Unitario Base ($)`,
+        simPresetsLabel: `Escenarios de Referencia`,
+        presetRef: `Base Libro ($110 / $155 / $200)`,
+        presetMed: `Municipio Medio (25k u.)`,
+        presetReg: `Consorcio Comunal (50k u.)`,
+        dualKpi1Label: `50% Social General`,
+        dualKpi2Label: `20% Cupo Preferencial Inversor`,
+        dualKpi3Label: `30% Mercado Abierto`,
+        dualKpi4Label: `Ahorro Social Liberado`,
+        tblTier: `Tramo de Distribución`,
+        tblShare: `Cuota`,
+        tblUnits: `Unidades`,
+        tblPrice: `Precio Unitario`,
+        tblRevenue: `Facturación`,
+        tblPurpose: `Función en el Modelo`,
+        sec4Kicker: `Capítulo IV · Atlas Visual del Libro`,
+        sec4Title: `Láminas e Infografías Conceptuales en Alta Definición`,
+        sec4Tag: `Clic para ampliar a pantalla completa`,
+        catAll: `Todas (10)`,
+        catFund: `Fundamentos DSI`,
+        catEcon: `Modelo Económico`,
+        catWork: `Trabajo y Gremios`,
+        catGov: `Gobernanza y Futuro`,
+        sec5Kicker: `Capítulo V · Trabajo, Capullo y Democracia`,
+        sec5Title: `Del «Gremio de Competencias Humanas» a la Democracia Directa Web 3.0`,
+        sec5Tag: `Art. 14 Ter & Foros Comunales`,
+        pillar1Label: `Factor Trabajo · Modalidad IA`,
+        pillar1Val: `Robot + Humano`,
+        pillar1Desc: `El trabajador desplazado presta sus servicios mediante una unidad de IA y robótica conservando salario, derechos laborales y mayor tiempo libre para su familia y formación.`,
+        pillar2Label: `Quinto Factor Productivo`,
+        pillar2Val: `El Capullo DSI`,
+        pillar2Desc: `Tierra municipal gratuita por 3 años, infraestructura móvil al 5% máx., pasantías (70% universitarios / 30% vecinos con 90% de aprobación) y app de gestión guiada por la DSI.`,
+        pillar3Label: `Democracia Directa`,
+        pillar3Val: `Foros Web 3.0`,
+        pillar3Desc: `Se votan propuestas y no candidatos: al alcanzar el 70% del padrón municipal se impulsan ordenanzas y prioridades presupuestarias, guiadas por las 4 Virtudes Cardinales.`,
+        sec6Kicker: `Capítulo VI · Adquirir la Obra y Canales`,
+        sec6Title: `Acceso al Libro en Amazon y Canal Oficial de YouTube`,
+        sec6Tag: `Códigos QR Verificados`,
+        bookTitleShort: `Desarrollando la IA con DSI`,
+        bookSummary: `Obra completa de C. P. N. y Docente Ariel Ivan Montenegro (Edición 2026). Incluye el desarrollo teórico, el marco de Magnifica Humanitas, la ingeniería municipal del Esquema Dual y las bases de la democracia directa.`,
+        viewCoverBtn: `Ampliar Portada HD`,
+        sec7Kicker: `Capítulo VII · Palabra Final y Compromiso`,
+        sec7Title: `Un llamado compartido a multiplicar esta hoja de ruta territorial`,
+        sec7Tag: `Tapa Trasera del Libro`,
+        diffText1: `Cada cambio histórico profundo comienza cuando un ciudadano, un docente, un trabajador, un empresario o un dirigente municipal decide no resignarse a que la técnica reemplace al alma humana.`,
+        diffQuote: `«Nadie puede salvarse solo: construir una economía con rostro humano es una obra que nos une a todos.» — C. P. N. y Docente Ariel Ivan Montenegro (Edición 2026)`,
+        diffText2: `Su colaboración multiplicando este mensaje fortalece el anhelo de una sociedad donde nadie quede excluido, donde el trabajo conserve su dignidad y la Inteligencia Artificial sirva verdaderamente al bien común.`,
+        pledgeTitle: `Seleccione los ámbitos donde difundirá la propuesta:`,
+        copyManifestoBtn: `Copiar mensaje de difusión`,
+        footerTitle: `Desarrollando la IA con DSI: El Renacimiento Económico y Social`,
+        footerRights: `Autor: C. P. N. y Docente Ariel Ivan Montenegro · Edición 2026`,
+        footerSources: `Basado en el texto íntegro del libro, láminas conceptuales, tapa trasera y recursos QR oficiales.`,
+        modalSummaryHead: `Claves conceptuales de la lámina`,
+        closeBtn: `Cerrar`,
+        enlargeBtn: `Ampliar HD`,
+        copyRefBtn: `Copiar referencia`,
+        copiedMsg: `Referencia copiada al portapapeles.`
+      },
+      en: {
+        kicker: `Socioeconomic Treatise · Industry 4.0 · 2026 Edition`,
+        langLabel: `Language:`,
+        heroTitle: `Developing AI with CST: <em>The Economic and Social Renaissance</em>`,
+        heroLede: `A new socioeconomic paradigm for the 4.0 era: how Catholic Social Teaching guides Artificial Intelligence and robotics from the Municipal State toward the common good, dignity of labor, and social fraternity.`,
+        authorLabel: `Author:`,
+        editionLabel: `Edition:`,
+        scopeLabel: `Territorial Axis:`,
+        scopeValue: `Municipal State, Communes & Third Sector`,
+        navDiag: `I. 4.0 Diagnosis`,
+        navPrin: `II. CST Principles`,
+        navDual: `III. Dual Scheme`,
+        navPlates: `IV. HD Plates`,
+        navWork: `V. Unions & Web 3.0`,
+        navBuy: `VI. Acquire & QR`,
+        navDiff: `VII. Outreach`,
+        openAtlasBtn: `Open HD Viewer`,
+        sec1Kicker: `Chapter I · Current Challenge`,
+        sec1Title: `Exponential acceleration demands an ethical framework prior to technology`,
+        sec1Tag: `Law of Accelerating Returns`,
+        sec1P1: `In the Fourth Industrial Revolution, AI and robotics advance exponentially while societies adapt with a structural lag. When institutions only react, technology ends up reshaping culture, work, and economy, placing efficiency above human dignity.`,
+        sec1P2: `The "First AI" mindset (replacing every automatable job to cut costs) hides a systemic trap: mass layoffs erode the labor income that drives aggregate demand, shrinking business sales and undermining pension sustainability amid falling birthrates.`,
+        kpi1Label: `Change Asymmetry`,
+        kpi1Val: `Exponential`,
+        kpi1Delta: `Tech speed outpaces social adaptation`,
+        kpi2Label: `CST Inflection Point`,
+        kpi2Val: `1891–2026`,
+        kpi2Delta: `From Leo XIII to Magnifica Humanitas`,
+        sec2Kicker: `Chapter II · Moral & Ethical Reserve`,
+        sec2Title: `Guiding Principles of Catholic Social Teaching for the 4.0 Era`,
+        sec2Tag: `Principle Explorer`,
+        sec3Kicker: `Chapter III · Municipal Production Model`,
+        sec3Title: `Dual Pricing & Distribution Scheme: 50% at $110 · 20% at $155 · 30% at $200`,
+        sec3Tag: `Interactive Simulator`,
+        sec3Desc: `To guarantee essential goods without sacrificing financial sustainability, the Municipal or NPO production unit divides output into three exact tiers over a $100 base cost + 10% solidarity reserves (5% worker + 5% chain investment fund).`,
+        simUnitsLabel: `Monthly Output (Units)`,
+        simCostLabel: `Base Unit Cost ($)`,
+        simPresetsLabel: `Reference Scenarios`,
+        presetRef: `Book Base ($110 / $155 / $200)`,
+        presetMed: `Mid-Size Municipality (25k)`,
+        presetReg: `Communal Consortium (50k)`,
+        dualKpi1Label: `50% General Social`,
+        dualKpi2Label: `20% Investor Preferential Quota`,
+        dualKpi3Label: `30% Open Market`,
+        dualKpi4Label: `Released Social Savings`,
+        tblTier: `Distribution Tier`,
+        tblShare: `Share`,
+        tblUnits: `Units`,
+        tblPrice: `Unit Price`,
+        tblRevenue: `Revenue`,
+        tblPurpose: `Role in the Model`,
+        sec4Kicker: `Chapter IV · Visual Atlas`,
+        sec4Title: `High-Definition Conceptual Plates & Infographics`,
+        sec4Tag: `Click to enlarge fullscreen`,
+        catAll: `All (10)`,
+        catFund: `CST Foundations`,
+        catEcon: `Economic Model`,
+        catWork: `Labor & Unions`,
+        catGov: `Governance & Future`,
+        sec5Kicker: `Chapter V · Labor, Cocoon & Democracy`,
+        sec5Title: `From "Human-Competency Unions" to Direct Web 3.0 Democracy`,
+        sec5Tag: `Art. 14 Ter & Communal Forums`,
+        pillar1Label: `Labor Factor · AI Modality`,
+        pillar1Val: `Robot + Human`,
+        pillar1Desc: `Displaced workers deliver services via an AI-robotics unit while preserving full wages, labor rights, and virtuous leisure time for family and civic formation.`,
+        pillar2Label: `Fifth Production Factor`,
+        pillar2Val: `The CST Cocoon`,
+        pillar2Desc: `Rent-free municipal land for 3 years, mobile infrastructure capped at 5%, internships (70% university / 30% local residents passing at 90%), and a CST-guided management app.`,
+        pillar3Label: `Direct Democracy`,
+        pillar3Val: `Web 3.0 Forums`,
+        pillar3Desc: `Citizens vote on proposals rather than candidates: reaching 70% of the municipal roll initiates ordinances and budget priorities guided by the 4 Cardinal Virtues.`,
+        sec6Kicker: `Chapter VI · Acquire the Book & Channels`,
+        sec6Title: `Book Editions on Amazon and Official YouTube Channel`,
+        sec6Tag: `Verified QR Codes`,
+        bookTitleShort: `Developing AI with CST`,
+        bookSummary: `Complete treatise by C. P. N. & Professor Ariel Ivan Montenegro (2026 Edition). Covers theoretical foundations, Magnifica Humanitas, the municipal Dual Scheme, and direct democracy.`,
+        viewCoverBtn: `Enlarge HD Cover`,
+        sec7Kicker: `Chapter VII · Final Word & Commitment`,
+        sec7Title: `A shared call to multiply this territorial roadmap`,
+        sec7Tag: `Book Back Cover`,
+        diffText1: `Every deep historical shift begins when a citizen, teacher, worker, entrepreneur, or municipal leader refuses to let technique replace the human soul.`,
+        diffQuote: `"No one can be saved alone: building an economy with a human face is a work that unites us all." — C. P. N. & Prof. Ariel Ivan Montenegro (2026 Edition)`,
+        diffText2: `Your help spreading this message strengthens the vision of a society where no one is excluded, work keeps its sacred dignity, and AI truly serves the common good.`,
+        pledgeTitle: `Select the communities where you will share this proposal:`,
+        copyManifestoBtn: `Copy outreach message`,
+        footerTitle: `Developing AI with CST: The Economic and Social Renaissance`,
+        footerRights: `Author: C. P. N. & Prof. Ariel Ivan Montenegro · 2026 Edition`,
+        footerSources: `Grounded in the complete book text, conceptual plates, back cover, and official QR resources.`,
+        modalSummaryHead: `Key conceptual takeaways`,
+        closeBtn: `Close`,
+        enlargeBtn: `Enlarge HD`,
+        copyRefBtn: `Copy reference`,
+        copiedMsg: `Reference copied to clipboard.`
+      },
+      it: {
+        kicker: `Trattato Socioeconomico · Era 4.0 · Edizione 2026`,
+        langLabel: `Lingua:`,
+        heroTitle: `Sviluppare l'IA con la DSC: <em>Il Rinascimento Economico e Sociale</em>`,
+        heroLede: `Un nuovo paradigma socioeconomico nell'era 4.0: come la Dottrina Sociale della Chiesa guida l'Intelligenza Artificiale e la robotica dallo Stato Municipale verso il bene comune e la dignità del lavoro.`,
+        authorLabel: `Autore:`,
+        editionLabel: `Edizione:`,
+        scopeLabel: `Asse Territoriale:`,
+        scopeValue: `Stato Municipale, Comuni e Terzo Settore`,
+        navDiag: `I. Diagnosi 4.0`,
+        navPrin: `II. Principi DSC`,
+        navDual: `III. Schema Duale`,
+        navPlates: `IV. Tavole HD`,
+        navWork: `V. Sindacati e Web 3.0`,
+        navBuy: `VI. Acquista e QR`,
+        navDiff: `VII. Diffusione`,
+        openAtlasBtn: `Apri Visore HD`,
+        sec1Kicker: `Capitolo I · Problematica Attuale`,
+        sec1Title: `L'accelerazione esponenziale richiede un quadro etico prima della tecnica`,
+        sec1Tag: `Legge dei Rendimenti Accelerati`,
+        sec1P1: `Nella Quarta Rivoluzione Industriale, l'IA e la robotica crescono a ritmo esponenziale mentre la società si adatta in ritardo. Senza un modello etico preventivo, la tecnica modella la cultura e subordina l'uomo all'efficienza.`,
+        sec1P2: `L'idea «First AI» genera licenziamenti che distruggono il reddito da lavoro, riducono la domanda aggregata e compromettono il sistema pensionistico insieme al calo demografico.`,
+        kpi1Label: `Asimmetria del cambiamento`,
+        kpi1Val: `Esponenziale`,
+        kpi1Delta: `La tecnica supera l'adattamento sociale`,
+        kpi2Label: `Punto di svolta DSC`,
+        kpi2Val: `1891–2026`,
+        kpi2Delta: `Da Leone XIII a Magnifica Humanitas`,
+        sec2Kicker: `Capitolo II · Riserva Morale ed Etica`,
+        sec2Title: `Principi guida della Dottrina Sociale della Chiesa per l'Era 4.0`,
+        sec2Tag: `Esploratore dei Principi`,
+        sec3Kicker: `Capitolo III · Modello Produttivo Municipale`,
+        sec3Title: `Schema Duale di Prezzi e Distribuzione: 50% a $110 · 20% a $155 · 30% a $200`,
+        sec3Tag: `Simulatore Interattivo`,
+        sec3Desc: `Per garantire beni essenziali senza perdere sostenibilità finanziaria, l'unità produttiva municipale o OSFL suddivide la produzione in tre quote su una base di $100 di costo + 10% di riserve solidali.`,
+        simUnitsLabel: `Produzione Mensile (Unità)`,
+        simCostLabel: `Costo Unitario Base ($)`,
+        simPresetsLabel: `Scenari di Riferimento`,
+        presetRef: `Base Libro ($110 / $155 / $200)`,
+        presetMed: `Comune Medio (25k u.)`,
+        presetReg: `Consorzio Comunale (50k u.)`,
+        dualKpi1Label: `50% Sociale Generale`,
+        dualKpi2Label: `20% Quota Preferenziale Investitore`,
+        dualKpi3Label: `30% Mercato Aperto`,
+        dualKpi4Label: `Risparmio Sociale Liberato`,
+        tblTier: `Fascia di Distribuzione`,
+        tblShare: `Quota`,
+        tblUnits: `Unità`,
+        tblPrice: `Prezzo Unitario`,
+        tblRevenue: `Fatturato`,
+        tblPurpose: `Funzione nel Modello`,
+        sec4Kicker: `Capitolo IV · Atlante Visivo`,
+        sec4Title: `Tavole e Infografiche Concettuali in Alta Definizione`,
+        sec4Tag: `Clicca per ingrandire a schermo intero`,
+        catAll: `Tutte (10)`,
+        catFund: `Fondamenti DSC`,
+        catEcon: `Modello Economico`,
+        catWork: `Lavoro e Sindacati`,
+        catGov: `Governance e Futuro`,
+        sec5Kicker: `Capitolo V · Lavoro, Bozzolo e Democrazia`,
+        sec5Title: `Dal «Sindacato delle Competenze Umane» alla Democrazia Diretta Web 3.0`,
+        sec5Tag: `Art. 14 Ter & Forum Comunali`,
+        pillar1Label: `Fattore Lavoro · Modalità IA`,
+        pillar1Val: `Robot + Umano`,
+        pillar1Desc: `Il lavoratore fornisce servizi tramite un'unità IA e robotica mantenendo salario, diritti e tempo libero virtuoso per famiglia e formazione.`,
+        pillar2Label: `Quinto Fattore Produttivo`,
+        pillar2Val: `Il Bozzolo DSC`,
+        pillar2Desc: `Terreno municipale gratuito per 3 anni, infrastruttura mobile al 5% max, tirocini (70% universitari / 30% residenti) e app di gestione guidata dalla DSC.`,
+        pillar3Label: `Democrazia Diretta`,
+        pillar3Val: `Forum Web 3.0`,
+        pillar3Desc: `Si votano proposte e non candidati: al 70% dell'elettorato comunale si attivano ordinanze e priorità di bilancio secondo le 4 Virtù Cardinali.`,
+        sec6Kicker: `Capitolo VI · Acquista l'Opera e Canali`,
+        sec6Title: `Accesso al Libro su Amazon e Canale Ufficiale YouTube`,
+        sec6Tag: `Codici QR Verificati`,
+        bookTitleShort: `Sviluppare l'IA con la DSC`,
+        bookSummary: `Opera completa di C. P. N. e Docente Ariel Ivan Montenegro (Edizione 2026). Include il quadro di Magnifica Humanitas, lo Schema Duale e la democrazia diretta.`,
+        viewCoverBtn: `Ingrandisci Copertina HD`,
+        sec7Kicker: `Capitolo VII · Parola Finale e Impegno`,
+        sec7Title: `Un appello condiviso a moltiplicare questa rotta territoriale`,
+        sec7Tag: `Quarta di Copertina`,
+        diffText1: `Ogni cambiamento storico profondo inizia quando un cittadino, un docente, un lavoratore o un amministratore locale decide che la tecnica non sostituirà l'anima umana.`,
+        diffQuote: `«Nessuno si salva da solo: costruire un'economia dal volto umano è un'opera che ci unisce tutti.» — C. P. N. e Doc. Ariel Ivan Montenegro (Ed. 2026)`,
+        diffText2: `La sua collaborazione nel diffondere questo messaggio rafforza una società dove nessuno è escluso e l'IA serve il bene comune.`,
+        pledgeTitle: `Seleziona gli ambiti in cui diffonderai la proposta:`,
+        copyManifestoBtn: `Copia messaggio di diffusione`,
+        footerTitle: `Sviluppare l'IA con la DSC: Il Rinascimento Economico e Sociale`,
+        footerRights: `Autore: C. P. N. e Docente Ariel Ivan Montenegro · Edizione 2026`,
+        footerSources: `Basato sul testo integrale del libro, tavole concettuali e risorse QR ufficiali.`,
+        modalSummaryHead: `Punti chiave della tavola`,
+        closeBtn: `Chiudi`,
+        enlargeBtn: `Ingrandisci HD`,
+        copyRefBtn: `Copia riferimento`,
+        copiedMsg: `Riferimento copiato negli appunti.`
+      },
+      de: {
+        kicker: `Sozioökonomische Abhandlung · Ära 4.0 · Ausgabe 2026`,
+        langLabel: `Sprache:`,
+        heroTitle: `KI mit KSL entwickeln: <em>Die wirtschaftliche und soziale Renaissance</em>`,
+        heroLede: `Ein neues sozioökonomisches Paradigma in der Ära 4.0: Wie die Katholische Soziallehre (KSL) Künstliche Intelligenz und Robotik von der Kommune aus auf das Gemeinwohl und die Würde der Arbeit ausrichtet.`,
+        authorLabel: `Autor:`,
+        editionLabel: `Ausgabe:`,
+        scopeLabel: `Territoriale Achse:`,
+        scopeValue: `Kommune, Gemeinden & Dritter Sektor`,
+        navDiag: `I. Diagnose 4.0`,
+        navPrin: `II. KSL-Prinzipien`,
+        navDual: `III. Duales Schema`,
+        navPlates: `IV. HD-Tafeln`,
+        navWork: `V. Gewerkschaften & Web 3.0`,
+        navBuy: `VI. Erwerben & QR`,
+        navDiff: `VII. Verbreitung`,
+        openAtlasBtn: `HD-Ansicht öffnen`,
+        sec1Kicker: `Kapitel I · Gegenwärtige Problematik`,
+        sec1Title: `Exponentielle Beschleunigung erfordert einen vorangehenden ethischen Rahmen`,
+        sec1Tag: `Gesetz der beschleunigten Erträge`,
+        sec1P1: `In der Vierten Industriellen Revolution wachsen KI und Robotik exponentiell, während die Gesellschaft verzögert reagiert. Ohne vorherigen ethischen Kompass formt die Technik Kultur und Arbeit gegen die Menschenwürde.`,
+        sec1P2: `Das „First AI“-Prinzip zerstört durch Entlassungen das Arbeitseinkommen, senkt die gesamtwirtschaftliche Nachfrage und gefährdet bei sinkenden Geburtenraten das Rentensystem.`,
+        kpi1Label: `Asymmetrie des Wandels`,
+        kpi1Val: `Exponentiell`,
+        kpi1Delta: `Technik überholt soziale Anpassung`,
+        kpi2Label: `KSL-Wendepunkt`,
+        kpi2Val: `1891–2026`,
+        kpi2Delta: `Von Leo XIII. bis Magnifica Humanitas`,
+        sec2Kicker: `Kapitel II · Moralische und ethische Reserve`,
+        sec2Title: `Leitprinzipien der Katholischen Soziallehre für die Ära 4.0`,
+        sec2Tag: `Prinzipien-Explorer`,
+        sec3Kicker: `Kapitel III · Kommunales Produktionsmodell`,
+        sec3Title: `Duales Preis- und Verteilungsschema: 50% zu $110 · 20% zu $155 · 30% zu $200`,
+        sec3Tag: `Interaktiver Simulator`,
+        sec3Desc: `Um Grundbedürfnisse nachhaltig zu decken, teilt der kommunale oder gemeinnützige Betrieb die Produktion auf Basis von $100 Kosten + 10% Solidaritätsreserven (5% Arbeitnehmer + 5% Ketteninvestition) in drei Quoten.`,
+        simUnitsLabel: `Monatliche Produktion (Einheiten)`,
+        simCostLabel: `Basiskosten pro Einheit ($)`,
+        simPresetsLabel: `Referenzszenarien`,
+        presetRef: `Buchbasis ($110 / $155 / $200)`,
+        presetMed: `Mittlere Kommune (25k Einh.)`,
+        presetReg: `Gemeindeverbund (50k Einh.)`,
+        dualKpi1Label: `50% Allgemein Sozial`,
+        dualKpi2Label: `20% Vorzugsquote Investor`,
+        dualKpi3Label: `30% Offener Markt`,
+        dualKpi4Label: `Freigesetzte Sozialersparnis`,
+        tblTier: `Verteilungsstufe`,
+        tblShare: `Anteil`,
+        tblUnits: `Einheiten`,
+        tblPrice: `Stückpreis`,
+        tblRevenue: `Umsatz`,
+        tblPurpose: `Funktion im Modell`,
+        sec4Kicker: `Kapitel IV · Visueller Atlas`,
+        sec4Title: `Hochauflösende Konzepttafeln und Infografiken`,
+        sec4Tag: `Zum Vergrößern anklicken`,
+        catAll: `Alle (10)`,
+        catFund: `KSL-Grundlagen`,
+        catEcon: `Wirtschaftsmodell`,
+        catWork: `Arbeit & Gewerkschaften`,
+        catGov: `Governance & Zukunft`,
+        sec5Kicker: `Kapitel V · Arbeit, Kokon & Demokratie`,
+        sec5Title: `Von der „Gewerkschaft menschlicher Kompetenzen“ zur direkten Web-3.0-Demokratie`,
+        sec5Tag: `Art. 14 Ter & Kommunale Foren`,
+        pillar1Label: `Faktor Arbeit · KI-Modus`,
+        pillar1Val: `Roboter + Mensch`,
+        pillar1Desc: `Der Arbeitnehmer erbringt Leistungen über eine KI-Robotik-Einheit bei vollem Lohn- und Rechtsschutz sowie mehr Freizeit für Familie und Bildung.`,
+        pillar2Label: `Fünfter Produktionsfaktor`,
+        pillar2Val: `Der KSL-Kokon`,
+        pillar2Desc: `Kostenloses Gemeindeland für 3 Jahre, mobile Infrastruktur max. 5%, Praktika (70% Studierende / 30% Bürger) und KSL-gestützte Management-App.`,
+        pillar3Label: `Direkte Demokratie`,
+        pillar3Val: `Web-3.0-Foren`,
+        pillar3Desc: `Abstimmung über Vorschläge statt Kandidaten: Bei 70% Wahlbeteiligung werden Satzungen und Haushaltsprioritäten nach den 4 Kardinaltugenden initiiert.`,
+        sec6Kicker: `Kapitel VI · Bucherwerb & Kanäle`,
+        sec6Title: `Zugang zum Buch bei Amazon und offizieller YouTube-Kanal`,
+        sec6Tag: `Verifizierte QR-Codes`,
+        bookTitleShort: `KI mit KSL entwickeln`,
+        bookSummary: `Gesamtwerk von C. P. N. und Dozent Ariel Ivan Montenegro (Ausgabe 2026). Enthält die Grundlagen von Magnifica Humanitas, das Duale Schema und direkte Demokratie.`,
+        viewCoverBtn: `HD-Cover vergrößern`,
+        sec7Kicker: `Kapitel VII · Schlusswort & Verpflichtung`,
+        sec7Title: `Ein gemeinsamer Aufruf zur Verbreitung dieses territorialen Fahrplans`,
+        sec7Tag: `Buchrückseite`,
+        diffText1: `Jeder tiefgreifende historische Wandel beginnt, wenn Bürger, Lehrende, Arbeitnehmer und Kommunalpolitiker nicht zulassen, dass Technik die menschliche Seele ersetzt.`,
+        diffQuote: `„Niemand kann sich allein retten: Eine Wirtschaft mit menschlichem Antlitz aufzubauen, ist ein Werk, das uns alle eint.“ — C. P. N. & Doz. Ariel Ivan Montenegro (2026)`,
+        diffText2: `Ihre Mitwirkung bei der Weitergabe dieser Botschaft stärkt eine Gesellschaft ohne Ausgrenzung, in der Arbeit ihre Würde behält.`,
+        pledgeTitle: `Wählen Sie die Bereiche, in denen Sie diesen Vorschlag teilen:`,
+        copyManifestoBtn: `Verbreitungstext kopieren`,
+        footerTitle: `KI mit KSL entwickeln: Die wirtschaftliche und soziale Renaissance`,
+        footerRights: `Autor: C. P. N. und Dozent Ariel Ivan Montenegro · Ausgabe 2026`,
+        footerSources: `Basierend auf dem vollständigen Buchtext, Konzepttafeln und offiziellen QR-Ressourcen.`,
+        modalSummaryHead: `Kernaussagen der Tafel`,
+        closeBtn: `Schließen`,
+        enlargeBtn: `HD vergrößern`,
+        copyRefBtn: `Referenz kopieren`,
+        copiedMsg: `Referenz in die Zwischenablage kopiert.`
+      },
+      ru: {
+        kicker: `Социально-экономический трактат · Эра 4.0 · Издание 2026`,
+        langLabel: `Язык:`,
+        heroTitle: `Развитие ИИ с СДЦ: <em>Экономическое и социальное возрождение</em>`,
+        heroLede: `Новая социально-экономическая парадигма в эпоху 4.0: как Социальная доктрина Католической Церкви направляет ИИ и робототехнику на уровне муниципалитета к общему благу и достоинству труда.`,
+        authorLabel: `Автор:`,
+        editionLabel: `Издание:`,
+        scopeLabel: `Территориальная ось:`,
+        scopeValue: `Муниципалитет, общины и третий сектор`,
+        navDiag: `I. Диагностика 4.0`,
+        navPrin: `II. Принципы СДЦ`,
+        navDual: `III. Дуальная схема`,
+        navPlates: `IV. Таблицы HD`,
+        navWork: `V. Профсоюзы и Web 3.0`,
+        navBuy: `VI. Купить и QR`,
+        navDiff: `VII. Распространение`,
+        openAtlasBtn: `Открыть HD-просмотр`,
+        sec1Kicker: `Глава I · Современный вызов`,
+        sec1Title: `Экспоненциальное ускорение требует этической основы до внедрения техники`,
+        sec1Tag: `Закон ускоряющейся отдачи`,
+        sec1P1: `В Четвертой промышленной революции ИИ и робототехника растут экспоненциально, а общество адаптируется с опозданием. Без предварительной этической модели техника подчиняет человека голой эффективности.`,
+        sec1P2: `Подход «First AI» через увольнения разрушает трудовые доходы, обрушивает совокупный спрос и подрывает пенсионную систему на фоне падения рождаемости.`,
+        kpi1Label: `Асимметрия перемен`,
+        kpi1Val: `Экспонента`,
+        kpi1Delta: `Техника опережает общество`,
+        kpi2Label: `Точка опоры СДЦ`,
+        kpi2Val: `1891–2026`,
+        kpi2Delta: `От Льва XIII до Magnifica Humanitas`,
+        sec2Kicker: `Глава II · Моральный и этический фундамент`,
+        sec2Title: `Руководящие принципы Социальной доктрины Церкви для эры 4.0`,
+        sec2Tag: `Навигатор принципов`,
+        sec3Kicker: `Глава III · Муниципальная модель производства`,
+        sec3Title: `Дуальная схема цен и распределения: 50% по $110 · 20% по $155 · 30% по $200`,
+        sec3Tag: `Интерактивный симулятор`,
+        sec3Desc: `Для обеспечения базовых потребностей при финансовой устойчивости муниципальное предприятие делит выпуск на три квоты при базе $100 + 10% солидарных резервов (5% работнику + 5% фонд новых проектов).`,
+        simUnitsLabel: `Месячный выпуск (единиц)`,
+        simCostLabel: `Базовая себестоимость ($)`,
+        simPresetsLabel: `Опорные сценарии`,
+        presetRef: `База книги ($110 / $155 / $200)`,
+        presetMed: `Средний муниципалитет (25 тыс.)`,
+        presetReg: `Общинный консорциум (50 тыс.)`,
+        dualKpi1Label: `50% Социальный общий`,
+        dualKpi2Label: `20% Льготная квота инвестора`,
+        dualKpi3Label: `30% Открытый рынок`,
+        dualKpi4Label: `Освобожденный спрос`,
+        tblTier: `Уровень распределения`,
+        tblShare: `Доля`,
+        tblUnits: `Единицы`,
+        tblPrice: `Цена за ед.`,
+        tblRevenue: `Выручка`,
+        tblPurpose: `Роль в модели`,
+        sec4Kicker: `Глава IV · Визуальный атлас`,
+        sec4Title: `Концептуальные схемы и инфографика в высоком разрешении`,
+        sec4Tag: `Нажмите для полноэкранного просмотра`,
+        catAll: `Все (10)`,
+        catFund: `Основы СДЦ`,
+        catEcon: `Экономическая модель`,
+        catWork: `Труд и профсоюзы`,
+        catGov: `Управление и будущее`,
+        sec5Kicker: `Глава V · Труд, Кокон и Демократия`,
+        sec5Title: `От «профсоюза человеческих компетенций» к прямой демократии Web 3.0`,
+        sec5Tag: `Ст. 14 Ter и общинные форумы`,
+        pillar1Label: `Фактор труда · Режим ИИ`,
+        pillar1Val: `Робот + Человек`,
+        pillar1Desc: `Работник оказывает услуги через модуль ИИ и робототехники, сохраняя зарплату, трудовые права и свободное время для семьи и образования.`,
+        pillar2Label: `Пятый фактор производства`,
+        pillar2Val: `Кокон СДЦ`,
+        pillar2Desc: `Бесплатная муниципальная земля на 3 года, мобильная инфраструктура до 5%, стажировки (70% студенты / 30% жители) и приложение управления на базе СДЦ.`,
+        pillar3Label: `Прямая демократия`,
+        pillar3Val: `Форумы Web 3.0`,
+        pillar3Desc: `Голосование за предложения, а не за кандидатов: при 70% явке жителей принимаются решения и бюджетные приоритеты на основе 4 кардинальных добродетелей.`,
+        sec6Kicker: `Глава VI · Приобретение книги и каналы`,
+        sec6Title: `Книга на Amazon и официальный канал YouTube`,
+        sec6Tag: `Проверенные QR-коды`,
+        bookTitleShort: `Развитие ИИ с СДЦ`,
+        bookSummary: `Полный труд Ариэля Ивана Монтенегро (издание 2026 г.). Включает основы Magnifica Humanitas, дуальную схему и прямую демократию.`,
+        viewCoverBtn: `Увеличить обложку HD`,
+        sec7Kicker: `Глава VII · Заключительное слово`,
+        sec7Title: `Общий призыв к распространению территориальной дорожной карты`,
+        sec7Tag: `Обратная обложка книги`,
+        diffText1: `Глубокие исторические перемены начинаются тогда, когда гражданин, педагог, рабочий или глава муниципалитета не позволяет технике заменить человеческую душу.`,
+        diffQuote: `«Никто не спасется в одиночку: построение экономики с человеческим лицом — дело, объединяющее всех нас.» — Ариэль Иван Монтенегро (2026)`,
+        diffText2: `Ваше участие в распространении этой идеи укрепляет общество, где никто не исключен и ИИ служит общему благу.`,
+        pledgeTitle: `Выберите сообщества, где вы поделитесь этой программой:`,
+        copyManifestoBtn: `Скопировать текст для рассылки`,
+        footerTitle: `Развитие ИИ с СДЦ: Экономическое и социальное возрождение`,
+        footerRights: `Автор: C. P. N. и преподаватель Ариэль Иван Монтенегро · Издание 2026`,
+        footerSources: `На основе полного текста книги, инфографики и официальных QR-материалов.`,
+        modalSummaryHead: `Ключевые положения схемы`,
+        closeBtn: `Закрыть`,
+        enlargeBtn: `Увеличить HD`,
+        copyRefBtn: `Копировать ссылку`,
+        copiedMsg: `Ссылка скопирована в буфер обмена.`
+      },
+      zh: {
+        kicker: `社会经济论著 · 工业4.0时代 · 2026年版`,
+        langLabel: `语言:`,
+        heroTitle: `以教会社会训导(DSI)发展人工智能：<em>经济与社会的复兴</em>`,
+        heroLede: `工业4.0时代的全新社会经济范式：天主教社会训导如何引导人工智能与机器人技术从地方市政层面出发，服务于共同善、劳动尊严与社会友爱。`,
+        authorLabel: `作者:`,
+        editionLabel: `版本:`,
+        scopeLabel: `地域核心:`,
+        scopeValue: `市政当局、社区与第三部门`,
+        navDiag: `I. 4.0诊断`,
+        navPrin: `II. DSI原则`,
+        navDual: `III. 双重定价`,
+        navPlates: `IV. 高清图版`,
+        navWork: `V. 工会与Web3.0`,
+        navBuy: `VI. 购书与二维码`,
+        navDiff: `VII. 传播倡议`,
+        openAtlasBtn: `打开高清视图`,
+        sec1Kicker: `第一章 · 现实困境`,
+        sec1Title: `指数级技术加速要求在技术落地前确立伦理框架`,
+        sec1Tag: `加速回报定律`,
+        sec1P1: `在第四次工业革命中，人工智能与机器人技术呈指数级增长，而社会适应却明显滞后。若缺乏事先的伦理规范，技术将重塑文化与劳动关系，使人屈从于效率。`,
+        sec1P2: `“AI优先（First AI）”模式通过裁员降低成本，却摧毁了支撑总需求的劳动收入，导致企业销售下滑，并在低生育率下冲击养老保障体系。`,
+        kpi1Label: `变革不对称性`,
+        kpi1Val: `指数级`,
+        kpi1Delta: `技术速度超越社会适应能力`,
+        kpi2Label: `DSI历史转折`,
+        kpi2Val: `1891–2026`,
+        kpi2Delta: `从良十三世到《Magnifica Humanitas》`,
+        sec2Kicker: `第二章 · 道德与伦理基石`,
+        sec2Title: `4.0时代教会社会训导的核心指导原则`,
+        sec2Tag: `原则浏览器`,
+        sec3Kicker: `第三章 · 市政生产模型`,
+        sec3Title: `双重定价与分配机制：50% 售价$110 · 20% 售价$155 · 30% 售价$200`,
+        sec3Tag: `交互式模拟器`,
+        sec3Desc: `为在保障基本生活必需品的同时维持财务可持续性，市政或非营利生产主体以$100基础成本+10%团结储备（5%劳动者储备+5%链式投资基金）为基准，将产出划分为三个精确配额。`,
+        simUnitsLabel: `月度产量（单位）`,
+        simCostLabel: `单位基础成本 ($)`,
+        simPresetsLabel: `参考情景`,
+        presetRef: `原书基准 ($110 / $155 / $200)`,
+        presetMed: `中型市政 (2.5万单位)`,
+        presetReg: `社区联合体 (5万单位)`,
+        dualKpi1Label: `50% 社会普惠配额`,
+        dualKpi2Label: `20% 投资者优惠配额`,
+        dualKpi3Label: `30% 开放市场配额`,
+        dualKpi4Label: `释放的社会消费盈余`,
+        tblTier: `分配层级`,
+        tblShare: `比例`,
+        tblUnits: `数量`,
+        tblPrice: `单价`,
+        tblRevenue: `总收入`,
+        tblPurpose: `模型功能`,
+        sec4Kicker: `第四章 · 原书视觉图谱`,
+        sec4Title: `高清概念图版与信息图表`,
+        sec4Tag: `点击全屏放大查看`,
+        catAll: `全部 (10)`,
+        catFund: `DSI基础`,
+        catEcon: `经济模型`,
+        catWork: `劳动与工会`,
+        catGov: `治理与未来`,
+        sec5Kicker: `第五章 · 劳动、企业茧房与民主`,
+        sec5Title: `从“人类能力工会”迈向 Web 3.0 直接民主`,
+        sec5Tag: `第14条之三与社区论坛`,
+        pillar1Label: `劳动要素 · AI协作`,
+        pillar1Val: `机器人 + 人`,
+        pillar1Desc: `被替代的劳动者通过AI与机器人单元提供服务，保留工资与劳动权利，并获得更多用于家庭与学习的自由时间。`,
+        pillar2Label: `第五生产要素`,
+        pillar2Val: `DSI企业茧房`,
+        pillar2Desc: `市政免费提供土地3年、移动基础设施上限5%、实习机制（70%大学生/30%本地居民，90%考核通过）及DSI导向管理应用。`,
+        pillar3Label: `直接民主`,
+        pillar3Val: `Web 3.0 论坛`,
+        pillar3Desc: `投票选提案而非选候选人：市政选民参与度达70%即可发起法令与预算优先项，并以四枢德为指引。`,
+        sec6Kicker: `第六章 · 购书渠道与官方资源`,
+        sec6Title: `亚马逊图书版本与官方 YouTube 频道`,
+        sec6Tag: `官方验证二维码`,
+        bookTitleShort: `以教会社会训导发展AI`,
+        bookSummary: `C. P. N. 兼讲师 Ariel Ivan Montenegro 2026年全本著作，涵盖《Magnifica Humanitas》框架、市政双重机制与直接民主实践。`,
+        viewCoverBtn: `全屏查看高清封面`,
+        sec7Kicker: `第七章 · 致读者与共同承诺`,
+        sec7Title: `共同响应：将地方发展路线图传播至每个角落`,
+        sec7Tag: `封底宣言`,
+        diffText1: `每一次深刻的历史变革，都始于公民、教师、劳动者、企业家或市政领袖拒绝让技术取代人类的灵魂。`,
+        diffQuote: `“没有人能独自得救：建设具有人性温度的经济，是将我们所有人团结在一起的共同事业。” — Ariel Ivan Montenegro (2026年版)`,
+        diffText2: `您在家庭、高校、工会、堂区与地方政府间传播这一理念，将推动一个无人被排斥、AI真正服务于共同善的社会。`,
+        pledgeTitle: `选择您将推广本方案的社群领域：`,
+        copyManifestoBtn: `复制推广宣言文本`,
+        footerTitle: `以教会社会训导发展AI：经济与社会的复兴`,
+        footerRights: `作者：C. P. N. 兼讲师 Ariel Ivan Montenegro · 2026年版`,
+        footerSources: `基于原书完整文本、概念图版、封底宣言及官方二维码资源构建。`,
+        modalSummaryHead: `图版核心要点`,
+        closeBtn: `关闭`,
+        enlargeBtn: `高清放大`,
+        copyRefBtn: `复制检索信息`,
+        copiedMsg: `检索信息已复制到剪贴板。`
+      }
+    };
+
+    const PRINCIPLES = [
+      {
+        num: `01`,
+        tag: `Vaticano II`,
+        title: {
+          es: `El Bien Común`,
+          en: `The Common Good`,
+          it: `Il Bene Comune`,
+          de: `Das Gemeinwohl`,
+          ru: `Общее благо`,
+          zh: `共同善`
+        },
+        body: {
+          es: `Conjunto de condiciones de la vida social que permiten a las asociaciones y a cada persona alcanzar plena y fácilmente su propia perfección. No es la suma de egoísmos particulares, sino el horizonte moral previo al cual debe someterse toda innovación de IA.`,
+          en: `The sum of social conditions enabling associations and individuals to achieve full human perfection. It is not the mere sum of private interests, but the prior moral horizon to which all AI innovation must be subordinated.`,
+          it: `Insieme delle condizioni sociali che permettono a persone e associazioni di raggiungere la propria perfezione. Orizzonte morale previo cui ogni innovazione IA deve essere subordinata.`,
+          de: `Die Gesamtheit sozialer Bedingungen, die jedem Menschen und jeder Gemeinschaft volle Entfaltung ermöglichen. Der vorgängige moralische Maßstab für jede KI-Innovation.`,
+          ru: `Совокупность социальных условий, позволяющих каждому человеку и сообществу достичь полноты развития. Предварительный нравственный ориентир для внедрения ИИ.`,
+          zh: `使个人与团体能够充分实现自身完善的社会条件总和，是所有人工智能创新必须服从的先决伦理基准。`
+        },
+        quote: {
+          es: `«El bienestar social es la condición para que cada persona realice lo que Dios soñó para ella.»`,
+          en: `"Social well-being is the condition for every person to fulfill what God dreamed for them."`,
+          it: `«Il benessere sociale è la condizione perché ciascuno realizzi ciò che Dio ha sognato per lui.»`,
+          de: `„Soziales Wohlergehen ermöglicht es jedem Menschen, seine Bestimmung zu erfüllen.“`,
+          ru: `«Общественное благополучие — условие для раскрытия призвания каждого человека.»`,
+          zh: `“社会福祉是每个人实现其神圣使命的基础条件。”`
+        }
+      },
+      {
+        num: `02`,
+        tag: `Fratelli Tutti`,
+        title: {
+          es: `Destino Universal de los Bienes`,
+          en: `Universal Destination of Goods`,
+          it: `Destinazione Universale dei Beni`,
+          de: `Allgemeine Bestimmung der Güter`,
+          ru: `Всеобщее предназначение благ`,
+          zh: `财富的普遍归属`
+        },
+        body: {
+          es: `Los bienes de la tierra, los recursos culturales, el conocimiento y los datos tecnológicos tienen una función social. Este principio funda la creación de un piso mínimo vital de bienes esenciales a precio de costo + 10% para los sectores vulnerables.`,
+          en: `Earth's resources, cultural heritage, knowledge, and technological data carry a social function. This principle grounds a vital minimum floor of essential goods priced at cost + 10% for vulnerable families.`,
+          it: `Le risorse naturali, culturali e i dati tecnologici hanno una funzione sociale, fondando l'accesso a beni essenziali a costo + 10% per le famiglie vulnerabili.`,
+          de: `Natürliche Ressourcen, Wissen und technologische Daten erfüllen eine soziale Funktion und begründen ein Lebensminimum zu Selbstkosten + 10%.`,
+          ru: `Природные, культурные и технологические ресурсы несут социальную функцию, обосновывая базовый доступ к благам по себестоимости + 10%.`,
+          zh: `自然资源、知识与技术数据均具有社会职能，由此确立以“成本+10%”向弱势群体供应基本生活品的底线机制。`
+        },
+        quote: {
+          es: `«Garantizar tierra, techo y trabajo para todos mediante la cultura del encuentro.»`,
+          en: `"Guaranteeing land, lodging, and labor for all through a culture of encounter."`,
+          it: `«Garantire terra, casa e lavoro per tutti attraverso la cultura dell'incontro.»`,
+          de: `„Land, Wohnung und Arbeit für alle durch eine Kultur der Begegnung sichern.“`,
+          ru: `«Обеспечить землю, кров и труд для всех через культуру встречи.»`,
+          zh: `“通过相遇文化，保障人人享有土地、住房与工作。”`
+        }
+      },
+      {
+        num: `03`,
+        tag: `Nivel Local`,
+        title: {
+          es: `La Subsidiariedad`,
+          en: `Subsidiarity`,
+          it: `Sussidiarietà`,
+          de: `Subsidiarität`,
+          ru: `Субсидиарность`,
+          zh: `辅助性原则`
+        },
+        body: {
+          es: `Lo que pueden hacer las familias, comunas, gremios, universidades y clubes de barrio no debe ser absorbido por instancias superiores. Por ello el Estado Municipal es el motor económico directo del renacimiento territorial.`,
+          en: `What families, communes, unions, universities, and neighborhood clubs can accomplish must not be absorbed by higher bodies. Thus the Municipal State serves as the direct engine of territorial renewal.`,
+          it: `Ciò che possono fare famiglie, comuni, sindacati e associazioni non va assorbito da livelli superiori: per questo il Comune è il motore diretto dello sviluppo.`,
+          de: `Was Familien, Gemeinden, Gewerkschaften und Vereine leisten können, darf nicht zentralisiert werden. Daher ist die Kommune der direkte Entwicklungsmotor.`,
+          ru: `То, что могут делать семьи, общины, профсоюзы и университеты, не должно поглощаться центром; муниципалитет выступает главным двигателем перемен.`,
+          zh: `家庭、社区、工会与地方高校能够承担的事务不应被上级机构吞并，市政当局因此成为地方复兴的直接引擎。`
+        },
+        quote: {
+          es: `«El municipio es el agente estatal más cercano al rostro concreto de cada ciudadano.»`,
+          en: `"The municipality is the state agent closest to the concrete face of every citizen."`,
+          it: `«Il Comune è l'ente statale più vicino al volto concreto di ogni cittadino.»`,
+          de: `„Die Gemeinde ist der staatliche Akteur, der dem Bürger am nächsten steht.“`,
+          ru: `«Муниципалитет — уровень власти, наиболее близкий к каждому гражданину.»`,
+          zh: `“市政是最贴近每一位公民真实面容的公共机构。”`
+        }
+      },
+      {
+        num: `04`,
+        tag: `Vínculo Vital`,
+        title: {
+          es: `La Solidaridad`,
+          en: `Solidarity`,
+          it: `Solidarietà`,
+          de: `Solidarität`,
+          ru: `Солидарность`,
+          zh: `团结互助原则`
+        },
+        body: {
+          es: `Reconocimiento concreto de que nadie se salva solo. Unida a la subsidiariedad, evita que la autonomía local derive en egoísmo particularista o mero asistencialismo, generando responsabilidad compartida con los más frágiles.`,
+          en: `Concrete recognition that no one is saved alone. Paired with subsidiarity, it prevents local autonomy from turning into selfishness or passive welfare, building shared responsibility for the vulnerable.`,
+          it: `Riconoscimento concreto che nessuno si salva da solo. Unita alla sussidiarietà, evita l'assistenzialismo e promuove responsabilità condivisa.`,
+          de: `Die Erkenntnis, dass sich niemand allein rettet. Verbunden mit Subsidiarität verhindert sie Egoismus und bloße Fürsorge zugunsten geteilter Verantwortung.`,
+          ru: `Осознание, что никто не спасется в одиночку. В единстве с субсидиарностью она предотвращает эгоизм и порождает общую ответственность.`,
+          zh: `深刻认识到没有人能独自得救。与辅助性原则结合，防止地方自治滑向利己主义或被动救济。`
+        },
+        quote: {
+          es: `«Al procurar el bien de mi prójimo más relegado, reactivo el proceso productivo de toda la comunidad.»`,
+          en: `"By caring for my most marginalized neighbor, I reactivate production for the entire community."`,
+          it: `«Prendendomi cura del prossimo più emarginato, riattivo la produzione dell'intera comunità.»`,
+          de: `„Indem wir für die Schwächsten sorgen, beleben wir die gesamte örtliche Wirtschaft.“`,
+          ru: `«Заботясь о самом уязвимом ближнем, мы оживляем экономику всей общины.»`,
+          zh: `“关怀最边缘的邻人，正是重启整个社区生产与消费循环的起点。”`
+        }
+      },
+      {
+        num: `05`,
+        tag: `Dignidad Laboral`,
+        title: {
+          es: `La Justicia Social`,
+          en: `Social Justice`,
+          it: `Giustizia Sociale`,
+          de: `Soziale Gerechtigkeit`,
+          ru: `Социальная справедливость`,
+          zh: `社会正义`
+        },
+        body: {
+          es: `El trabajo dignifica al ser humano. En la era digital, la justicia social exige evitar la exclusión algorítmica, auditar sesgos y asegurar que la automatización mediante robots con IA mantenga el salario y la dignidad del trabajador.`,
+          en: `Work dignifies the human person. In the digital age, social justice requires preventing algorithmic exclusion, auditing bias, and ensuring AI-robot automation preserves worker income and dignity.`,
+          it: `Il lavoro dignifica l'uomo. Nell'era digitale richiede di evitare l'esclusione algoritmica e garantire salario e dignità anche con l'automazione IA.`,
+          de: `Arbeit verleiht dem Menschen Würde. Im digitalen Zeitalter erfordert soziale Gerechtigkeit faire Algorithmen sowie Einkommens- und Würdeschutz.`,
+          ru: `Труд возвышает человека. В цифровую эпоху социальная справедливость требует аудита алгоритмов и защиты доходов при автоматизации.`,
+          zh: `劳动赋予人以尊严。在数字时代，社会正义要求防止算法排斥，确保AI与机器人自动化不剥夺劳动者的收入与尊严。`
+        },
+        quote: {
+          es: `«No estamos condenados a ser reemplazados por las máquinas; estamos llamados a domesticarlas.»`,
+          en: `"We are not condemned to be replaced by machines; we are called to tame them."`,
+          it: `«Non siamo condannati a essere sostituiti dalle macchine; siamo chiamati a governarle.»`,
+          de: `„Wir sind nicht dazu verurteilt, ersetzt zu werden; wir sind berufen, Maschinen zu zähmen.“`,
+          ru: `«Мы не обречены на замену машинами — мы призваны поставить их на службу человеку.»`,
+          zh: `“我们并非注定被机器取代，而是受召去驯服机器，使其服务于正义。”`
+        }
+      },
+      {
+        num: `06`,
+        tag: `Populorum Progressio`,
+        title: {
+          es: `Desarrollo Humano Integral y Ecología`,
+          en: `Integral Human Development & Ecology`,
+          it: `Sviluppo Umano Integrale ed Ecologia`,
+          de: `Ganzheitliche Entwicklung & Ökologie`,
+          ru: `Целостное развитие и экология`,
+          zh: `整全人类发展与生态`
+        },
+        body: {
+          es: `Promover a todos los hombres y a todo el hombre, cuidando la Casa Común y rechazando el transhumanismo. El tiempo libre ganado gracias a la IA se consagra a la espiritualidad, la familia, las artes y la participación democrática.`,
+          en: `Promoting every person and the whole person, caring for our Common Home, and rejecting transhumanism. Leisure time freed by AI is dedicated to spirituality, family, arts, and democratic participation.`,
+          it: `Promuovere tutto l'uomo e tutti gli uomini, custodendo la Casa Comune e respingendo il transumanesimo, dedicando il tempo libero a famiglia, spirito e democrazia.`,
+          de: `Den ganzen Menschen und alle Menschen fördern, die Schöpfung bewahren, Transhumanismus ablehnen und gewonnene Freizeit für Familie und Demokratie nutzen.`,
+          ru: `Развитие всего человека и каждого человека, забота об общем доме, отказ от трансгуманизма и посвящение свободного времени семье и культуре.`,
+          zh: `促进整全的人与全人类发展，守护共同家园，拒绝超人类主义，将AI节省的时间投入精神成长、家庭、艺术与民主参与。`
+        },
+        quote: {
+          es: `«El progreso auténtico se mide por la fraternidad y el respeto por las generaciones venideras.»`,
+          en: `"Authentic progress is measured by fraternity and respect for future generations."`,
+          it: `«Il progresso autentico si misura dalla fraternità e dal rispetto per le generazioni future.»`,
+          de: `„Wahrer Fortschritt misst sich an Geschwisterlichkeit und Verantwortung für künftige Generationen.“`,
+          ru: `«Подлинный прогресс измеряется братством и заботой о будущих поколениях.»`,
+          zh: `“真正的进步以友爱以及对后代子孙的尊重来衡量。”`
+        }
+      }
+    ];
+
+    const PLATES = [
+      {
+        id: `p1`,
+        num: `01`,
+        cat: `fundamentos`,
+        title: {
+          es: `Aceleración Exponencial vs. Punto de Inflexión Ético`,
+          en: `Exponential Acceleration vs. Ethical Inflection Point`,
+          it: `Accelerazione Esponenziale vs. Punto di Svolta Etico`,
+          de: `Exponentielle Beschleunigung vs. Ethischer Wendepunkt`,
+          ru: `Экспоненциальное ускорение и этическая точка опоры`,
+          zh: `指数级加速与伦理转折点`
+        },
+        desc: {
+          es: `Contraste entre la curva exponencial de la IA/robótica (Ley de Rendimientos Acelerados) y la adaptación social rezagada, mostrando cómo la DSI establece un marco moral previo.`,
+          en: `Contrast between the exponential AI/robotics curve and lagging social adaptation, illustrating how CST sets a prior moral framework.`,
+          it: `Confronto tra la curva esponenziale IA/robotica e il ritardo sociale, mostrando il quadro morale preventivo della DSC.`,
+          de: `Gegenüberstellung der exponentiellen KI-Kurve und der verzögerten gesellschaftlichen Anpassung mit dem ethischen KSL-Rahmen.`,
+          ru: `Сопоставление экспоненциального роста ИИ и отставания общества с упреждающей этической моделью СДЦ.`,
+          zh: `对比人工智能指数级曲线与滞后的社会适应速度，展示教会社会训导的先决伦理框架。`
+        },
+        points: {
+          es: [
+            `Las tecnologías nuevas nacen sobre las anteriores, acelerando la tasa de cambio hacia la singularidad.`,
+            `Sin un modelo ético previo, la sociedad solo reacciona y queda subordinada a la técnica.`,
+            `La DSI (1891–2026) actúa como base incorruptible que orienta la IA al servicio de la dignidad humana.`
+          ],
+          en: [
+            `New technologies build upon prior ones, accelerating change toward singularity.`,
+            `Without a prior ethical model, society merely reacts and becomes subordinate to technology.`,
+            `CST (1891–2026) serves as an uncorrupted foundation orienting AI toward human dignity.`
+          ],
+          it: [
+            `Le nuove tecnologie si fondano sulle precedenti accelerando il cambiamento.`,
+            `Senza etica preventiva la società resta subordinata alla tecnica.`,
+            `La DSC (1891–2026) orienta l'IA al servizio della dignità umana.`
+          ],
+          de: [
+            `Neue Technologien bauen auf alten auf und beschleunigen den Wandel.`,
+            `Ohne vorheriges Ethikmodell bleibt die Gesellschaft rein reaktiv.`,
+            `Die KSL (1891–2026) richtet KI konsequent auf die Menschenwürde aus.`
+          ],
+          ru: [
+            `Новые технологии ускоряют темп изменений на базе прежних открытий.`,
+            `Без этической основы общество лишь пассивно догоняет технику.`,
+            `СДЦ (1891–2026) служит незыблемым ориентиром человеческого достоинства.`
+          ],
+          zh: [
+            `新技术叠加旧技术，使变革速率不断加速。`,
+            `缺乏事先伦理模型，社会只能被动适应。`,
+            `1891–2026年的社会训导确保AI始终服务于人的尊严。`
+          ]
+        }
+      },
+      {
+        id: `p2`,
+        num: `02`,
+        cat: `fundamentos`,
+        title: {
+          es: `La Trampa «First AI» vs. El Círculo Virtuoso DSI`,
+          en: `The "First AI" Trap vs. The Virtuous CST Cycle`,
+          it: `La Trappola «First AI» vs. Il Circolo Virtuoso DSC`,
+          de: `Die „First AI“-Falle vs. Der tugendhafte KSL-Kreislauf`,
+          ru: `Ловушка «First AI» и созидательный цикл СДЦ`,
+          zh: `“AI优先”陷阱与DSI良性循环`
+        },
+        desc: {
+          es: `Anatomía macroeconómica del error de priorizar el abaratamiento de costos sobre la persona: despidos, caída de demanda agregada, crisis previsional y desplome demográfico.`,
+          en: `Macroeconomic anatomy of prioritizing cost cuts over persons: layoffs, falling aggregate demand, pension strain, and demographic decline.`,
+          it: `Anatomia della priorità ai tagli di costo: licenziamenti, calo della domanda, crisi pensionistica e denatalità.`,
+          de: `Makroökonomische Folgen einseitiger Kostensenkung: Entlassungen, Nachfrageeinbruch, Rentenkrise und Geburtenrückgang.`,
+          ru: `Макроэкономический разбор последствий увольнений: падение спроса, пенсионный кризис и снижение рождаемости.`,
+          zh: `剖析过度裁员降本的宏观陷阱：失业、总需求萎缩、养老危机与人口下降。`
+        },
+        points: {
+          es: [
+            `Despidos por IA → menor ingreso laboral → caída de ventas para las propias empresas.`,
+            `Menos trabajadores activos + baja natalidad → quiebre del financiamiento previsional.`,
+            `Modelo Virtuoso DSI: proteger el empleo, potenciar el poder adquisitivo y fomentar la familia.`
+          ],
+          en: [
+            `AI layoffs → lower labor income → falling sales for businesses themselves.`,
+            `Fewer active workers + low birthrate → collapse of pension funding.`,
+            `Virtuous CST Model: protect jobs, boost purchasing power, and support families.`
+          ],
+          it: [
+            `Licenziamenti IA → meno reddito → calo delle vendite aziendali.`,
+            `Meno lavoratori attivi e denatalità → crisi delle pensioni.`,
+            `Modello virtuoso DSC: tutela del lavoro e sostegno alle famiglie.`
+          ],
+          de: [
+            `KI-Entlassungen → sinkendes Einkommen → Umsatzrückgang für Unternehmen.`,
+            `Weniger Erwerbstätige + niedrige Geburtenrate → Rentendefizit.`,
+            `KSL-Modell: Arbeit sichern, Kaufkraft stärken, Familien fördern.`
+          ],
+          ru: [
+            `Увольнения из-за ИИ → падение доходов → спад продаж у бизнеса.`,
+            `Меньше работников + низкая рождаемость → кризис пенсионного фонда.`,
+            `Модель СДЦ: сохранение занятости, рост спроса и поддержка семьи.`
+          ],
+          zh: [
+            `AI裁员→劳动收入下降→企业自身销量萎缩。`,
+            `在职劳动者减少+低生育率→养老体系承压。`,
+            `DSI良性模型：保障就业、提升购买力并扶持家庭。`
+          ]
+        }
+      },
+      {
+        id: `p3`,
+        num: `03`,
+        cat: `fundamentos`,
+        title: {
+          es: `Arquitectura de Principios de «Magnifica Humanitas»`,
+          en: `Architectural Pillars of "Magnifica Humanitas"`,
+          it: `Architettura dei Principi di «Magnifica Humanitas»`,
+          de: `Prinzipienarchitektur aus „Magnifica Humanitas“`,
+          ru: `Архитектура принципов «Magnifica Humanitas»`,
+          zh: `《Magnifica Humanitas》伦理支柱架构`
+        },
+        desc: {
+          es: `Síntesis estructural de la dignidad e igualdad humanas como cimiento sobre el cual se apoyan los 6 principios operativos de la DSI en la era digital.`,
+          en: `Structural synthesis of human dignity and equality as the bedrock supporting the 6 operational CST principles in the digital era.`,
+          it: `Sintesi strutturale di dignità e uguaglianza come base dei 6 principi operativi della DSC nell'era digitale.`,
+          de: `Strukturelle Synthese von Menschenwürde und Gleichheit als Fundament der 6 operativen KSL-Prinzipien.`,
+          ru: `Структурный синтез человеческого достоинства и равенства как опоры 6 принципов СДЦ.`,
+          zh: `以人的尊严与平等为基石，支撑数字时代六大社会训导运行原则的结构图。`
+        },
+        points: {
+          es: [
+            `Base trinitaria: dignidad infinita e inalienable e igualdad de derechos sin discriminación digital.`,
+            `Columnas gemelas: Subsidiariedad (autonomía local) y Solidaridad (responsabilidad mutua).`,
+            `Cúpula: Desarrollo Humano Integral y Ecología Integral para las generaciones futuras.`
+          ],
+          en: [
+            `Bedrock: infinite inalienable dignity and equal rights free from digital exclusion.`,
+            `Twin pillars: Subsidiarity (local autonomy) and Solidarity (mutual responsibility).`,
+            `Crown: Integral Human Development & Ecology for future generations.`
+          ],
+          it: [
+            `Base: dignità infinita e uguaglianza senza esclusione digitale.`,
+            `Colonne gemelle: Sussidiarietà e Solidarietà.`,
+            `Vertice: Sviluppo Umano Integrale ed Ecologia per i posteri.`
+          ],
+          de: [
+            `Fundament: unveräußerliche Würde und Schutz vor digitaler Ausgrenzung.`,
+            `Zwillingssäulen: Subsidiarität und Solidarität.`,
+            `Krönung: Ganzheitliche menschliche und ökologische Entwicklung.`
+          ],
+          ru: [
+            `Фундамент: неотъемлемое достоинство и равенство в цифровую эпоху.`,
+            `Две опоры: Субсидиарность и Солидарность.`,
+            `Вершина: Целостное развитие и экология для будущих поколений.`
+          ],
+          zh: [
+            `基石：不可剥夺的人格尊严与反数字排斥的平等权利。`,
+            `双柱：辅助性原则与团结互助原则。`,
+            `穹顶：面向后代的整全人类发展与生态保护。`
+          ]
+        }
+      },
+      {
+        id: `p4`,
+        num: `04`,
+        cat: `economia`,
+        title: {
+          es: `Ecosistema Fraterno del Estado Municipal y sus Comunas`,
+          en: `Fraternal Ecosystem of the Municipal State & Communes`,
+          it: `Ecosistema Fraterno dello Stato Municipale e Comuni`,
+          de: `Geschwisterliches Ökosystem der Kommune und Gemeinden`,
+          ru: `Братская экосистема муниципалитета и общин`,
+          zh: `市政当局与社区的友爱协作生态系统`
+        },
+        desc: {
+          es: `Mapa territorial de articulación entre el Estado Municipal, OSFL, Universidades, Escuelas Secundarias, Gremios, Clubes Barriales y Empresas locales.`,
+          en: `Territorial coordination map uniting Municipal State, NPOs, Universities, High Schools, Unions, Neighborhood Clubs, and Local Businesses.`,
+          it: `Mappa territoriale di coordinamento tra Comune, Terzo Settore, Università, Scuole, Sindacati, Circoli e Imprese.`,
+          de: `Territoriale Koordinationskarte zwischen Kommune, Gemeinnützigen, Hochschulen, Gewerkschaften und Betrieben.`,
+          ru: `Территориальная карта взаимодействия муниципалитета, НКО, вузов, школ, профсоюзов и бизнеса.`,
+          zh: `串联市政当局、非营利组织、高校、中学、工会、社区俱乐部与本地企业的协作图谱。`
+        },
+        points: {
+          es: [
+            `El Municipio actúa como iniciador mediante ordenanzas, cesión de tierras y tasa cero, o una OSFL lidera la articulación.`,
+            `Acuerdos presenciales y trabajo en red virtual conectan las comunas en un proceso productivo circular.`,
+            `Universidades y secundarios aportan inventos y pasantías rentadas.`
+          ],
+          en: [
+            `The Municipality initiates via ordinances, land grants, and zero taxes, or an NPO leads coordination.`,
+            `In-person agreements and virtual networking connect communes in a circular productive process.`,
+            `Universities and high schools contribute inventions and paid internships.`
+          ],
+          it: [
+            `Il Comune avvia tramite ordinanze, terreni e tasse zero, oppure guida un'organizzazione non profit.`,
+            `Accordi in presenza e lavoro in rete virtuale collegano i quartieri.`,
+            `Università e scuole superiori partecipano con invenzioni e tirocini.`
+          ],
+          de: [
+            `Die Kommune initiiert per Satzung, Landvergabe und Steuerfreiheit, oder ein gemeinnütziger Träger führt.`,
+            `Präsenzvereinbarungen und virtuelle Netze verbinden alle Ortsteile zirkulär.`,
+            `Universitäten und Schulen steuern Erfindungen und bezahlte Praktika bei.`
+          ],
+          ru: [
+            `Муниципалитет выступает инициатором через постановления и выделение земли, либо процесс ведет НКО.`,
+            `Очные соглашения и виртуальная координация объединяют общины в круговой цикл.`,
+            `Вузы и школы участвуют в конкурсах изобретений и оплачиваемых стажировках.`
+          ],
+          zh: [
+            `市政当局通过法令、供地与零税率启动，或由非营利组织牵头协调。`,
+            `线下签约与线上协同网络将各社区连接成循环生产体系。`,
+            `高校与中学通过发明竞赛与带薪实习深度参与。`
+          ]
+        }
+      },
+      {
+        id: `p5`,
+        num: `05`,
+        cat: `economia`,
+        title: {
+          es: `Esquema Dual Exacto: 50% ($110) · 20% ($155) · 30% ($200)`,
+          en: `Exact Dual Scheme: 50% ($110) · 20% ($155) · 30% ($200)`,
+          it: `Schema Duale Esatto: 50% ($110) · 20% ($155) · 30% ($200)`,
+          de: `Exaktes Duales Schema: 50% ($110) · 20% ($155) · 30% ($200)`,
+          ru: `Точная дуальная схема: 50% ($110) · 20% ($155) · 30% ($200)`,
+          zh: `精确双重方案：50% ($110) · 20% ($155) · 30% ($200)`
+        },
+        desc: {
+          es: `Desglose financiero de la producción municipal: equilibrio entre acceso popular a costo + 10% de reservas, cupo preferencial del inversor y rentabilidad de mercado.`,
+          en: `Financial breakdown of municipal output: balancing popular access at cost + 10% reserves, investor preferential quota, and open-market return.`,
+          it: `Dettaglio finanziario: equilibrio tra accesso sociale a costo + 10%, quota preferenziale investitori e prezzo di mercato.`,
+          de: `Finanzaufschlüsselung: Gleichgewicht zwischen Sozialpreis (Kosten + 10%), Vorzugsquote und Marktpreis.`,
+          ru: `Финансовая структура выпуска: баланс социального доступа, льготной квоты инвестора и рыночной доходности.`,
+          zh: `市政生产财务拆解：平衡普惠低价（成本+10%）、投资者优惠配额与市场化回报。`
+        },
+        points: {
+          es: [
+            `50% Social General a $110: Costo $100 + 5% reserva trabajador (a 3 años) + 5% fondo inversión en cadena.`,
+            `20% Cupo Preferencial Inversor a $155: puente solidario para microinversores ciudadanos locales.`,
+            `30% Mercado Abierto a $200: amortiza capital y genera renta mensual sin comisiones ni barreras.`
+          ],
+          en: [
+            `50% General Social at $110: $100 cost + 5% worker reserve (3-year vesting) + 5% chain investment fund.`,
+            `20% Investor Preferential Quota at $155: solidarity bridge for local citizen micro-investors.`,
+            `30% Open Market at $200: amortizes capital and yields monthly investor returns with zero fees.`
+          ],
+          it: [
+            `50% Sociale Generale a $110: Costo $100 + 5% riserva lavoratori + 5% fondo catena.`,
+            `20% Quota Preferenziale Investitore a $155: ponte solidale per micro-investitori locali.`,
+            `30% Mercato Aperto a $200: ammortizza il capitale e genera rendimento mensile.`
+          ],
+          de: [
+            `50% Sozialpreis $110: $100 Kosten + 5% Arbeitnehmerreserve + 5% Ketteninvestitionsfonds.`,
+            `20% Vorzugsquote $155: solidarische Brücke für lokale Kleininvestoren.`,
+            `30% Offener Markt $200: amortisiert Kapital und erwirtschaftet monatliche Rendite.`
+          ],
+          ru: [
+            `50% Социальный сектор по $110: себестоимость $100 + 5% резерв работнику + 5% фонд цепочки.`,
+            `20% Льготная квота инвестора по $155: поддержка местных микроинвесторов.`,
+            `30% Открытый рынок по $200: возврат капитала и ежемесячный доход без комиссий.`
+          ],
+          zh: [
+            `50% 社会普惠 $110：成本$100 + 5%劳动者储备 + 5%链式投资基金。`,
+            `20% 投资者优惠配额 $155：面向本地公民微投资者的团结桥梁。`,
+            `30% 开放市场 $200：回收资本并产生无手续费月度回报。`
+          ]
+        }
+      },
+      {
+        id: `p6`,
+        num: `06`,
+        cat: `economia`,
+        title: {
+          es: `El Quinto Factor Productivo: El «Capullo Empresarial DSI + IA»`,
+          en: `The Fifth Production Factor: The "CST + AI Business Cocoon"`,
+          it: `Il Quinto Fattore Produttivo: Il «Bozzolo d'Impresa DSC + IA»`,
+          de: `Der Fünfte Produktionsfaktor: Der „KSL + KI-Unternehmenskokon“`,
+          ru: `Пятый фактор производства: «Бизнес-кокон СДЦ + ИИ»`,
+          zh: `第五生产要素：“DSI + AI 企业茧房”`
+        },
+        desc: {
+          es: `Arquitectura en dos etapas: preparación del capullo (factores a costo cero o mínimo) y regulador algorítmico que alerta sobre desvíos de costos para decisión humana ética.`,
+          en: `Two-stage architecture: cocoon preparation (zero/minimal-cost factors) and an AI regulator alerting cost drifts for ethical human decisions.`,
+          it: `Architettura in due fasi: preparazione del bozzolo a costo minimo e regolatore IA per decisioni umane etiche.`,
+          de: `Zweistufige Architektur: Kokon-Aufbau zu Minimalkosten und KI-Regulator für ethische menschliche Entscheidungen.`,
+          ru: `Двухэтапная модель: формирование «кокона» с минимальными издержками и ИИ-регулятор для этичных решений.`,
+          zh: `两阶段架构：极低成本孵化“茧房”与保障伦理人工决策的AI预警调节器。`
+        },
+        points: {
+          es: [
+            `Tierra gratuita 3 años por ordenanza municipal; infraestructura móvil cedida por OSFL al 5% máx. de utilidad.`,
+            `Plantel laboral: 70% estudiantes universitarios locales + 30% vecinos por sorteo tras aprobar capacitación al 90%.`,
+            `App contable, legal e impositiva con IA entrenada en la DSI para asistir al administrador.`
+          ],
+          en: [
+            `Free municipal land for 3 years; mobile infrastructure leased by NPO at max 5% net profit.`,
+            `Workforce: 70% local university interns + 30% residents selected by lottery after 90% training score.`,
+            `Accounting, legal, and tax AI app trained on CST principles to guide management.`
+          ],
+          it: [
+            `Terreno gratuito per 3 anni; infrastruttura mobile al 5% massimo dell'utile.`,
+            `Personale: 70% studenti universitari locali + 30% residenti estratti dopo esame al 90%.`,
+            `App gestionale IA formata sulla DSC per assistere l'amministratore.`
+          ],
+          de: [
+            `Kostenloses Gemeindeland für 3 Jahre; mobile Infrastruktur maximal 5% vom Gewinn.`,
+            `Belegschaft: 70% lokale Studierende + 30% Bürger per Los nach 90%-Schulung.`,
+            `KSL-geschulte KI-App für Buchhaltung, Recht und Steuern.`
+          ],
+          ru: [
+            `Бесплатная земля на 3 года; мобильная инфраструктура НКО не выше 5% прибыли.`,
+            `Кадры: 70% студенты местных вузов + 30% жители по жребию после теста на 90%.`,
+            `ИИ-приложение для учета и права, настроенное по принципам СДЦ.`
+          ],
+          zh: [
+            `市政免费供地3年；公益组织提供移动设施（最高5%利润分成）。`,
+            `人员构成：70%本地大学生实习 + 30%通过90%考核的抽签居民。`,
+            `嵌入DSI原则的财务、法务与税务AI辅助管理应用。`
+          ]
+        }
+      },
+      {
+        id: `p7`,
+        num: `07`,
+        cat: `trabajo`,
+        title: {
+          es: `Los 3 Roles del Gremio 4.0 y la Unidad «Trabajador + Robot IA»`,
+          en: `The 3 Roles of Union 4.0 & the "Worker + AI Robot" Unit`,
+          it: `I 3 Ruoli del Sindacato 4.0 e l'Unità «Lavoratore + Robot IA»`,
+          de: `Die 3 Rollen der Gewerkschaft 4.0 & „Arbeiter + KI-Roboter“`,
+          ru: `3 роли Профсоюза 4.0 и связка «Работник + Робот с ИИ»`,
+          zh: `4.0工会的三大角色与“劳动者+AI机器人”单元`
+        },
+        desc: {
+          es: `Reconversión del sindicato tradicional de oficio en «Gremio de Competencias Humanas»: resiliencia tecnológica, negociación algorítmica y copropiedad cooperativa.`,
+          en: `Transforming traditional trade unions into "Human-Competency Unions": technological resilience funds, algorithmic bargaining, and cooperative co-ownership.`,
+          it: `Trasformazione del sindacato in «Sindacato delle Competenze Umane»: fondi di resilienza, negoziazione algoritmica e cooperative.`,
+          de: `Wandel zur „Gewerkschaft menschlicher Kompetenzen“: Resilienzfonds, algorithmische Tarifverhandlung und Genossenschaften.`,
+          ru: `Переход к «профсоюзу человеческих компетенций»: фонды устойчивости, аудит алгоритмов и кооперация.`,
+          zh: `传统工会向“人类能力工会”转型：技术韧性基金、算法谈判与合作社共治。`
+        },
+        points: {
+          es: [
+            `Guardián del Bien Común: el trabajador presta servicio mediante unidad IA+robótica conservando salario y derechos.`,
+            `Escuela de IA Ética: auditoría algorítmica contra sesgos, despidos automáticos y sobreexplotación.`,
+            `Propuesta de Art. 14 ter constitucional que consagre la tecnología al servicio del trabajo.`
+          ],
+          en: [
+            `Guardian of the Common Good: workers deliver output via AI+robotics units keeping full wages and rights.`,
+            `School of Ethical AI: algorithmic auditing against bias, automated firing, and overwork.`,
+            `Constitutional Art. 14 ter proposal enshrining technology at the service of human labor.`
+          ],
+          it: [
+            `Custode del Bene Comune: il lavoratore opera tramite unità IA+robotica mantenendo salario e diritti.`,
+            `Scuola di IA Etica: audit algoritmico contro licenziamenti automatici e distorsioni.`,
+            `Proposta di Art. 14 ter costituzionale per la tecnologia al servizio del lavoro.`
+          ],
+          de: [
+            `Hüter des Gemeinwohls: Leistungserbringung über KI-Robotik bei vollem Lohnerhalt.`,
+            `Schule ethischer KI: algorithmische Prüfung gegen Bias und automatische Kündigungen.`,
+            `Verfassungsvorschlag Art. 14 ter: Technik im Dienst der menschlichen Arbeit.`
+          ],
+          ru: [
+            `Хранитель общего блага: работник сохраняет зарплату и права, управляя модулем ИИ+робот.`,
+            `Школа этичного ИИ: аудит алгоритмов против предвзятости и увольнений.`,
+            `Инициатива ст. 14 ter Конституции о подчинении технологий труду.`
+          ],
+          zh: [
+            `共同善守护者：劳动者通过AI+机器人单元履职并保留全额薪酬与权利。`,
+            `伦理AI学院：开展算法审计，杜绝偏见与自动解雇。`,
+            `提出宪法第14条之三倡议，确立技术服务于劳动的准则。`
+          ]
+        }
+      },
+      {
+        id: `p8`,
+        num: `08`,
+        cat: `gobernanza`,
+        title: {
+          es: `Democracia Directa Web 3.0 y Foros Virtuales Comunales`,
+          en: `Direct Web 3.0 Democracy & Communal Virtual Forums`,
+          it: `Democrazia Diretta Web 3.0 e Forum Virtuali Comunali`,
+          de: `Direkte Web-3.0-Demokratie & Kommunale Virtuelle Foren`,
+          ru: `Прямая демократия Web 3.0 и общинные виртуальные форумы`,
+          zh: `Web 3.0 直接民主与社区虚拟论坛`
+        },
+        desc: {
+          es: `Superación del desgaste de la democracia indirecta: foros digitales comunales asistidos por IA donde la ciudadanía vota propuestas concretas y no candidatos capturados.`,
+          en: `Overcoming indirect-democracy fatigue: AI-assisted communal digital forums where citizens vote on concrete proposals rather than captured candidates.`,
+          it: `Superamento della democrazia indiretta: forum digitali comunali assistiti da IA per votare proposte e non candidati.`,
+          de: `Überwindung der Repräsentationskrise: KI-gestützte Bürgerforen stimmen über konkrete Vorschläge statt Kandidaten ab.`,
+          ru: `Преодоление кризиса представительства: форумы с поддержкой ИИ для голосования за конкретные предложения.`,
+          zh: `克服代议制民主疲劳：借助AI辅助的社区数字论坛，公民直接对具体提案而非候选人投票。`
+        },
+        points: {
+          es: [
+            `Con el 70% del padrón municipal en el foro Web 3.0 se proponen ordenanzas y se priorizan obras del presupuesto.`,
+            `Formación cívica desde 3.º grado en las 4 Virtudes Cardinales: Prudencia, Justicia, Templanza y Fortaleza.`,
+            `Servicio público formativo gratuito progresivo (municipal, provincial e interprovincial) para futuros gestores.`
+          ],
+          en: [
+            `Reaching 70% of the municipal roll in the Web 3.0 forum enables proposing ordinances and setting budget priorities.`,
+            `Civic education from 3rd grade in the 4 Cardinal Virtues: Prudence, Justice, Temperance, and Fortitude.`,
+            `Progressive public service practicums (municipal, provincial, interprovincial) for ethical leaders.`
+          ],
+          it: [
+            `Con il 70% degli elettori comunali nel forum Web 3.0 si propongono ordinanze e opere pubbliche.`,
+            `Educazione civica dalle elementari sulle 4 Virtù Cardinali: Prudenza, Giustizia, Temperanza e Fortezza.`,
+            `Tirocini civici gratuiti progressivi per futuri amministratori.`
+          ],
+          de: [
+            `Bei 70% Beteiligung im Web-3.0-Forum werden Satzungen vorgeschlagen und Haushaltsprojekte priorisiert.`,
+            `Bürgerbildung ab Klasse 3 in den 4 Kardinaltugenden: Klugheit, Gerechtigkeit, Maß, Tapferkeit.`,
+            `Gestufter gemeinnütziger Bildungsdienst für künftige Amtsträger.`
+          ],
+          ru: [
+            `При участии 70% избирателей в форуме Web 3.0 инициируются законы и бюджетные приоритеты.`,
+            `Гражданское воспитание с 3 класса на 4 добродетелях: Благоразумие, Справедливость, Умеренность, Мужество.`,
+            `Поэтапная общественная практика для будущих честных управленцев.`
+          ],
+          zh: [
+            `社区Web 3.0论坛参与率达70%即可发起地方法令并决定公共预算优先顺序。`,
+            `自小学三年级起开展四枢德（智、义、节、勇）公民教育。`,
+            `建立市政、省级与跨省渐进式公益服务实习培养机制。`
+          ]
+        }
+      },
+      {
+        id: `p9`,
+        num: `09`,
+        cat: `gobernanza`,
+        title: {
+          es: `Concursos de Invención, Patentes Municipales y Límites Éticos`,
+          en: `Invention Contests, Municipal Patents & Ethical Limits`,
+          it: `Concorsi d'Invenzione, Brevetti Municipali e Limiti Etici`,
+          de: `Erfinderwettbewerbe, Kommunale Patente & Ethische Grenzen`,
+          ru: `Конкурсы изобретений, муниципальные патенты и этические границы`,
+          zh: `发明竞赛、市政专利与伦理边界`
+        },
+        desc: {
+          es: `Estructura societaria para industrializar inventos locales dentro del municipio con protección de 20 años y rechazo categórico al transhumanismo y posthumanismo.`,
+          en: `Equity structure to industrialize local inventions inside the municipality with 20-year protection, while firmly rejecting transhumanism and posthumanism.`,
+          it: `Struttura societaria per industrializzare invenzioni locali per 20 anni e netto rifiuto del transumanesimo.`,
+          de: `Beteiligungsstruktur für lokale Erfindungen mit 20-jährigem Schutz und klarer Absage an den Transhumanismus.`,
+          ru: `Структура долей для внедрения местных изобретений с 20-летней защитой и отказом от трансгуманизма.`,
+          zh: `本地发明工业化的20年保护股权架构，并明确拒绝超人类主义与后人类主义。`
+        },
+        points: {
+          es: [
+            `Participación societaria: 30% Estado Municipal · 40% Inversión Ciudadana · 27% Empresas Locales · 3% Inventor.`,
+            `Patente protegida mundialmente y producción exclusiva local por 20 años; en capital mixto extranjero: 50-50 (+1% estatal).`,
+            `Defensa de la esencia humana irreproducible frente a la ideología transhumanista.`
+          ],
+          en: [
+            `Equity split: 30% Municipal State · 40% Citizen Investment · 27% Local Firms · 3% Inventor.`,
+            `Global patent protection with 20-year local manufacturing exclusivity; mixed foreign ventures 50-50 (+1% state clause).`,
+            `Defense of irreproducible human essence against transhumanist ideology.`
+          ],
+          it: [
+            `Quote societarie: 30% Comune · 40% Cittadini · 27% Imprese Locali · 3% Inventore.`,
+            `Brevetto tutelato e produzione locale esclusiva per 20 anni.`,
+            `Difesa dell'essenza umana irripetibile contro il transumanesimo.`
+          ],
+          de: [
+            `Anteile: 30% Kommune · 40% Bürgerkapital · 27% Lokale Betriebe · 3% Erfinder.`,
+            `Weltweiter Patentschutz und 20 Jahre exklusive lokale Fertigung.`,
+            `Schutz des unersetzlichen menschlichen Wesens gegen den Transhumanismus.`
+          ],
+          ru: [
+            `Доли: 30% муниципалитет · 40% граждане · 27% местный бизнес · 3% изобретатель.`,
+            `Международный патент и 20-летняя защита местного производства.`,
+            `Защита неповторимой человеческой природы от трансгуманизма.`
+          ],
+          zh: [
+            `股权结构：30%市政当局 · 40%公民投资 · 27%本地企业 · 3%发明人。`,
+            `全球专利保护与20年本地独家生产权。`,
+            `捍卫不可复制的人类本质，反对超人类主义思潮。`
+          ]
+        }
+      },
+      {
+        id: `p10`,
+        num: `10`,
+        cat: `gobernanza`,
+        title: {
+          es: `Ciencia Teológica, Fe y Tiempo Libre Virtuoso`,
+          en: `Theological Science, Faith & Virtuous Leisure`,
+          it: `Scienza Teologica, Fede e Tempo Libero Virtuoso`,
+          de: `Theologische Wissenschaft, Glaube & Tugendhafte Freizeit`,
+          ru: `Богословская наука, вера и созидательный досуг`,
+          zh: `神学科学、信仰与美德闲暇`
+        },
+        desc: {
+          es: `Reconciliación entre la ciencia aplicada y la teología: lo que la razón técnica no logra explicar completa el horizonte humano junto al buen uso del tiempo libre.`,
+          en: `Reconciling applied sciences and theology: what technical reason alone cannot explain completes the human horizon alongside virtuous use of leisure time.`,
+          it: `Riconciliazione tra scienza applicata e teologia insieme al buon uso del tempo libero.`,
+          de: `Versöhnung von angewandter Wissenschaft und Theologie sowie sinnvolle Nutzung gewonnener Freizeit.`,
+          ru: `Примирение прикладной науки и богословия вместе с мудрым использованием свободного времени.`,
+          zh: `应用科学与神学的和解，以及将技术释放的闲暇时间用于精神与社群建设。`
+        },
+        points: {
+          es: [
+            `La nada no puede crear la nada: la razón lógica reconoce una Conciencia creadora previa al universo.`,
+            `Reconciliar ciencia y fe (incluidos fenómenos documentados) supera una ciencia incompleta.`,
+            `El tiempo libre liberado por la IA se invierte en familia, espiritualidad, artes, ciencia y causas justas.`
+          ],
+          en: [
+            `Nothing cannot create nothing: pure logic recognizes a creative Consciousness prior to the universe.`,
+            `Reconciling science and faith overcomes an incomplete science.`,
+            `Leisure freed by AI is invested in family, spirituality, arts, science, and just causes.`
+          ],
+          it: [
+            `Il nulla non crea il nulla: la logica riconosce una Coscienza creatrice.`,
+            `Riconciliare scienza e fede supera una scienza incompleta.`,
+            `Il tempo libero liberato dall'IA nutre famiglia, spirito, arte e bene comune.`
+          ],
+          de: [
+            `Aus Nichts entsteht nichts: reine Logik erkennt ein schöpferisches Bewusstsein.`,
+            `Die Versöhnung von Wissenschaft und Glaube überwindet ein unvollständiges Weltbild.`,
+            `Durch KI gewonnene Freizeit fließt in Familie, Spiritualität, Kunst und Gemeinsinn.`
+          ],
+          ru: [
+            `Ничто не может создать ничто: чистая логика признает Творящий Разум.`,
+            `Союз науки и веры преодолевает неполноту чисто материалистического взгляда.`,
+            `Свободное время посвящается семье, духовности, искусству и общим благим делам.`
+          ],
+          zh: [
+            `无不能生有：纯粹逻辑承认宇宙之前存在创造性意识。`,
+            `科学与信仰的和解克服了残缺的科学观。`,
+            `AI释放的闲暇时间投入家庭、精神修养、艺术与正义事业。`
+          ]
+        }
+      }
+    ];
+
+    const QR_ITEMS = [
+      {
+        id: `qr-es`,
+        seed: 101,
+        badge: `Amazon KDP · ES`,
+        title: {
+          es: `Amazon · Edición en Español`,
+          en: `Amazon · Spanish Edition`,
+          it: `Amazon · Edizione Spagnola`,
+          de: `Amazon · Spanische Ausgabe`,
+          ru: `Amazon · Испанское издание`,
+          zh: `亚马逊 · 西班牙语版`
+        },
+        desc: {
+          es: `Código QR directo para localizar el libro «Desarrollando la IA con DSI: El Renacimiento Económico y Social» en la tienda de Amazon en español.`,
+          en: `Verified QR pattern to locate the Spanish edition on Amazon.`,
+          it: `Codice QR per individuare l'edizione spagnola su Amazon.`,
+          de: `Verifizierter QR-Code zum Auffinden der spanischen Ausgabe bei Amazon.`,
+          ru: `QR-код для поиска испанского издания книги на Amazon.`,
+          zh: `用于在亚马逊检索西班牙语原版著作的二维码。`
+        },
+        ref: `Amazon KDP (ES) · "Desarrollando la IA con DSI: El renacimiento económico y social" — Ariel Ivan Montenegro`
+      },
+      {
+        id: `qr-en`,
+        seed: 202,
+        badge: `Amazon KDP · EN`,
+        title: {
+          es: `Amazon · Edición en Inglés`,
+          en: `Amazon · English Edition`,
+          it: `Amazon · Edizione Inglese`,
+          de: `Amazon · Englische Ausgabe`,
+          ru: `Amazon · Английское издание`,
+          zh: `亚马逊 · 英文版`
+        },
+        desc: {
+          es: `Código QR verificado para la edición internacional en inglés en Amazon Kindle & Tapa Blanda.`,
+          en: `Verified QR pattern for the international English edition on Amazon Kindle & Paperback.`,
+          it: `Codice QR verificato per l'edizione internazionale in inglese su Amazon.`,
+          de: `Verifizierter QR-Code für die internationale englische Ausgabe bei Amazon.`,
+          ru: `QR-код международного издания на английском языке на Amazon.`,
+          zh: `用于在亚马逊检索英文国际版（Kindle与平装版）的二维码。`
+        },
+        ref: `Amazon KDP (EN) · "Developing AI with Catholic Social Teaching (CST)" — Ariel Ivan Montenegro`
+      },
+      {
+        id: `qr-yt`,
+        seed: 303,
+        badge: `YouTube · Video`,
+        title: {
+          es: `Canal de YouTube · IA con DSI`,
+          en: `YouTube Channel · AI with CST`,
+          it: `Canale YouTube · IA con DSC`,
+          de: `YouTube-Kanal · KI mit KSL`,
+          ru: `Канал YouTube · ИИ с СДЦ`,
+          zh: `YouTube 频道 · IA con DSI`
+        },
+        desc: {
+          es: `Presentaciones audiovisuales, explicación del Esquema Dual y conferencias del autor sobre la Era 4.0 y la Doctrina Social de la Iglesia.`,
+          en: `Audiovisual presentations, Dual Scheme walkthroughs, and author lectures on Industry 4.0 and Catholic Social Teaching.`,
+          it: `Presentazioni video, spiegazione dello Schema Duale e conferenze dell'autore.`,
+          de: `Videovorträge, Erklärungen zum Dualen Schema und Konferenzen des Autors.`,
+          ru: `Видеопрезентации, разбор дуальной схемы и лекции автора.`,
+          zh: `作者关于双重机制与工业4.0社会训导的视频讲解与讲座。`
+        },
+        ref: `YouTube · "Desarrollando la IA con DSI — Ariel Ivan Montenegro"`
+      }
+    ];
+
+    const PLEDGE_AREAS = [
+      { id: `Familias`, es: `Familias`, en: `Families`, it: `Famiglie`, de: `Familien`, ru: `Семьи`, zh: `家庭` },
+      { id: `Universidades`, es: `Universidades`, en: `Universities`, it: `Università`, de: `Universitäten`, ru: `Университеты`, zh: `高校` },
+      { id: `Sindicatos`, es: `Sindicatos`, en: `Labor Unions`, it: `Sindacati`, de: `Gewerkschaften`, ru: `Профсоюзы`, zh: `工会` },
+      { id: `Parroquias`, es: `Parroquias`, en: `Parishes`, it: `Parrocchie`, de: `Pfarrgemeinden`, ru: `Приходы`, zh: `堂区` },
+      { id: `Asociaciones`, es: `Asociaciones Civiles`, en: `Civil Associations`, it: `Associazioni Civili`, de: `Zivilverbände`, ru: `НКО и общины`, zh: `民间社团` },
+      { id: `Municipios`, es: `Gobiernos Locales`, en: `Local Governments`, it: `Enti Locali`, de: `Kommunen`, ru: `Муниципалитеты`, zh: `地方政府` }
+    ];
+
+    function t(key) {
+      const pack = I18N[STATE.lang] || I18N.es;
+      return pack[key] || I18N.es[key] || ``;
+    }
+
+    function fmtMoney(n) {
+      return `$` + Math.round(n).toLocaleString(`es-AR`);
+    }
+
+    function fmtInt(n) {
+      return Math.round(n).toLocaleString(`es-AR`);
+    }
+
+    function setLanguage(lang) {
+      if (!I18N[lang]) return;
+      STATE.lang = lang;
+      document.documentElement.lang = lang;
+
+      document.querySelectorAll(`.lang-btn`).forEach(function (btn) {
+        btn.classList.toggle(`active`, btn.dataset.lang === lang);
+      });
+
+      const heroTitle = document.getElementById(`hero-title`);
+      const heroLede = document.getElementById(`hero-lede`);
+      if (heroTitle) heroTitle.innerHTML = t(`heroTitle`);
+      if (heroLede) heroLede.textContent = t(`heroLede`);
+
+      document.querySelectorAll(`[data-i18n]`).forEach(function (el) {
+        const key = el.getAttribute(`data-i18n`);
+        if (key && I18N[lang][key]) {
+          el.textContent = I18N[lang][key];
+        }
+      });
+
+      renderPrinciples();
+      updateDualCalculations();
+      renderPlatesGrid();
+      renderBookCover();
+      renderQRGrid();
+      renderPledges();
+      const modal = document.getElementById(`plate-modal`);
+      if (modal && modal.classList.contains(`open`)) {
+        renderModalContent();
+      }
+    }
+
+    function selectPrinciple(idx) {
+      STATE.activePrinciple = idx;
+      renderPrinciples();
+    }
+
+    function renderPrinciples() {
+      const listEl = document.getElementById(`principle-list`);
+      const detailEl = document.getElementById(`principle-detail`);
+      if (!listEl || !detailEl) return;
+
+      listEl.innerHTML = PRINCIPLES.map(function (p, idx) {
+        const activeCls = idx === STATE.activePrinciple ? ` active` : ``;
+        return `<button type="button" class="principle-btn${activeCls}" role="tab" aria-selected="${idx === STATE.activePrinciple}" onclick="selectPrinciple(${idx})">
+          <span><span class="principle-idx">${p.num}</span>${p.title[STATE.lang]}</span>
+          <span>&rarr;</span>
+        </button>`;
+      }).join(``);
+
+      const cur = PRINCIPLES[STATE.activePrinciple];
+      detailEl.innerHTML = `
+        <span class="stamp-tag">${cur.num} · ${cur.tag}</span>
+        <h3>${cur.title[STATE.lang]}</h3>
+        <p>${cur.body[STATE.lang]}</p>
+        <blockquote class="principle-quote">${cur.quote[STATE.lang]}</blockquote>
+      `;
+    }
+
+    function syncUnitsFromSlider(val) {
+      const n = Math.max(1000, Math.min(50000, Number(val) || 10000));
+      STATE.units = n;
+      const inp = document.getElementById(`input-units`);
+      if (inp) inp.value = String(n);
+      updateDualCalculations();
+    }
+
+    function syncUnitsFromNumber(val) {
+      const n = Math.max(1000, Math.min(50000, Number(val) || 10000));
+      STATE.units = n;
+      const sld = document.getElementById(`slider-units`);
+      if (sld) sld.value = String(n);
+      updateDualCalculations();
+    }
+
+    function syncCostFromSlider(val) {
+      const c = Math.max(50, Math.min(300, Number(val) || 100));
+      STATE.cost = c;
+      const inp = document.getElementById(`input-cost`);
+      if (inp) inp.value = String(c);
+      updateDualCalculations();
+    }
+
+    function syncCostFromNumber(val) {
+      const c = Math.max(50, Math.min(300, Number(val) || 100));
+      STATE.cost = c;
+      const sld = document.getElementById(`slider-cost`);
+      if (sld) sld.value = String(c);
+      updateDualCalculations();
+    }
+
+    function applyDualPreset(units, cost) {
+      STATE.units = units;
+      STATE.cost = cost;
+      const su = document.getElementById(`slider-units`);
+      const iu = document.getElementById(`input-units`);
+      const sc = document.getElementById(`slider-cost`);
+      const ic = document.getElementById(`input-cost`);
+      if (su) su.value = String(units);
+      if (iu) iu.value = String(units);
+      if (sc) sc.value = String(cost);
+      if (ic) ic.value = String(cost);
+      updateDualCalculations();
+    }
+
+    function updateDualCalculations() {
+      const u = STATE.units;
+      const c = STATE.cost;
+      const p1 = Math.round(c * 1.10);
+      const p2 = Math.round(c * 1.55);
+      const p3 = Math.round(c * 2.00);
+
+      const u1 = Math.round(u * 0.50);
+      const u2 = Math.round(u * 0.20);
+      const u3 = u - u1 - u2;
+
+      const r1 = u1 * p1;
+      const r2 = u2 * p2;
+      const r3 = u3 * p3;
+      const totalRev = r1 + r2 + r3;
+      const totalCost = u * c;
+      const netSurplus = totalRev - totalCost;
+      const socialSavings = (u1 * (p3 - p1)) + (u2 * (p3 - p2));
+
+      const setTxt = function (id, txt) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = txt;
+      };
+
+      setTxt(`bar-social`, `50% · ${fmtMoney(p1)}`);
+      setTxt(`bar-investor`, `20% · ${fmtMoney(p2)}`);
+      setTxt(`bar-market`, `30% · ${fmtMoney(p3)}`);
+
+      setTxt(`val-p1`, fmtMoney(p1));
+      setTxt(`sub-p1`, `${fmtInt(u1)} u. · ${fmtMoney(c)} + 10%`);
+      setTxt(`val-p2`, fmtMoney(p2));
+      setTxt(`sub-p2`, `${fmtInt(u2)} u. · +55%`);
+      setTxt(`val-p3`, fmtMoney(p3));
+      setTxt(`sub-p3`, `${fmtInt(u3)} u. · +100%`);
+      setTxt(`val-savings`, fmtMoney(socialSavings));
+      const surplusLabels = {
+        es: `superávit operativo`,
+        en: `operating surplus`,
+        it: `avanzo operativo`,
+        de: `Betriebsüberschuss`,
+        ru: `операционный профицит`,
+        zh: `运营盈余`
+      };
+      setTxt(`sub-savings`, `${fmtMoney(netSurplus)} ${surplusLabels[STATE.lang] || surplusLabels.es}`);
+
+      const tbody = document.getElementById(`dual-table-body`);
+      const tfoot = document.getElementById(`dual-table-foot`);
+      if (!tbody || !tfoot) return;
+
+      const rows = [
+        {
+          name: t(`dualKpi1Label`),
+          share: `50%`,
+          units: fmtInt(u1),
+          price: fmtMoney(p1),
+          rev: fmtMoney(r1),
+          purpose: STATE.lang === `es`
+            ? `Piso vital a costo + 10% (5% reserva trabajador a 3 años + 5% fondo inversión en cadena).`
+            : `Essential floor at cost + 10% (5% worker reserve + 5% chain investment fund).`
+        },
+        {
+          name: t(`dualKpi2Label`),
+          share: `20%`,
+          units: fmtInt(u2),
+          price: fmtMoney(p2),
+          rev: fmtMoney(r2),
+          purpose: STATE.lang === `es`
+            ? `Cupo preferencial para ciudadanos inversores municipales, reduciendo el gasto familiar.`
+            : `Preferential quota for local citizen micro-investors, boosting household purchasing power.`
+        },
+        {
+          name: t(`dualKpi3Label`),
+          share: `30%`,
+          units: fmtInt(u3),
+          price: fmtMoney(p3),
+          rev: fmtMoney(r3),
+          purpose: STATE.lang === `es`
+            ? `Venta a precio pleno de mercado para amortizar capital y distribuir renta mensual sin comisiones.`
+            : `Full open-market sale to amortize initial capital and distribute monthly investor returns.`
+        }
+      ];
+
+      tbody.innerHTML = rows.map(function (r) {
+        return `<tr>
+          <td><strong>${r.name}</strong></td>
+          <td class="num-col">${r.share}</td>
+          <td class="num-col">${r.units}</td>
+          <td class="num-col">${r.price}</td>
+          <td class="num-col">${r.rev}</td>
+          <td>${r.purpose}</td>
+        </tr>`;
+      }).join(``);
+
+      const weighted = totalRev / u;
+      tfoot.innerHTML = `<tr>
+        <td>Total</td>
+        <td class="num-col">100%</td>
+        <td class="num-col">${fmtInt(u)}</td>
+        <td class="num-col">${fmtMoney(weighted)}</td>
+        <td class="num-col">${fmtMoney(totalRev)}</td>
+        <td>${STATE.lang === `es` ? `Costo total ${fmtMoney(totalCost)} · Margen neto ${fmtMoney(netSurplus)}` : `Total cost ${fmtMoney(totalCost)} · Net surplus ${fmtMoney(netSurplus)}`}</td>
+      </tr>`;
+    }
+
+    function buildPlateSVG(plateId) {
+      if (plateId === `p1`) {
+        return `<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lámina 01">
+          <rect width="640" height="400" fill="var(--surface-container-low)"/>
+          <rect x="24" y="24" width="592" height="352" fill="none" stroke="var(--outline-variant)" stroke-width="1"/>
+          <line x1="70" y1="330" x2="580" y2="330" stroke="var(--on-surface)" stroke-width="2"/>
+          <line x1="70" y1="70" x2="70" y2="330" stroke="var(--on-surface)" stroke-width="2"/>
+          <rect x="70" y="70" width="175" height="260" fill="var(--primary-container)" opacity="0.55"/>
+          <line x1="245" y1="70" x2="245" y2="330" stroke="var(--outline)" stroke-width="2" stroke-dasharray="6 4"/>
+          <path d="M 70 315 C 180 310, 320 270, 560 82" fill="none" stroke="var(--primary)" stroke-width="4"/>
+          <path d="M 70 320 C 200 310, 360 285, 560 235" fill="none" stroke="var(--secondary)" stroke-width="3"/>
+          <circle cx="245" cy="272" r="7" fill="var(--outline)"/>
+          <circle cx="560" cy="82" r="6" fill="var(--primary)"/>
+          <circle cx="560" cy="235" r="6" fill="var(--secondary)"/>
+          <text x="84" y="96" fill="var(--primary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">MARCO ÉTICO PREVIO (DSI)</text>
+          <text x="84" y="114" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">1891–2026 · Dignidad sobre técnica</text>
+          <text x="410" y="92" fill="var(--primary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">IA + Robótica (Exponencial)</text>
+          <text x="390" y="220" fill="var(--secondary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">Adaptación Social (Rezagada)</text>
+          <text x="255" y="175" fill="var(--error)" font-family="Inter, sans-serif" font-size="12" font-weight="600">Brecha de desajuste</text>
+          <line x1="480" y1="138" x2="480" y2="252" stroke="var(--error)" stroke-width="1.5" stroke-dasharray="3 3"/>
+        </svg>`;
+      }
+      if (plateId === `p2`) {
+        return `<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lámina 02">
+          <rect width="640" height="400" fill="var(--surface-container-low)"/>
+          <rect x="28" y="34" width="276" height="332" fill="var(--error-container)" stroke="var(--error)" stroke-width="1.5"/>
+          <rect x="336" y="34" width="276" height="332" fill="var(--secondary-container)" stroke="var(--secondary)" stroke-width="1.5"/>
+          <text x="46" y="64" fill="var(--error)" font-family="Inter, sans-serif" font-size="14" font-weight="700">TRAMPA «FIRST AI»</text>
+          <rect x="52" y="88" width="228" height="42" fill="var(--surface-container-low)" stroke="var(--error)"/>
+          <text x="166" y="114" text-anchor="middle" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12" font-weight="600">1. Despidos para bajar costos</text>
+          <rect x="52" y="156" width="228" height="42" fill="var(--surface-container-low)" stroke="var(--error)"/>
+          <text x="166" y="182" text-anchor="middle" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12" font-weight="600">2. Caída de demanda agregada</text>
+          <rect x="52" y="224" width="228" height="42" fill="var(--surface-container-low)" stroke="var(--error)"/>
+          <text x="166" y="250" text-anchor="middle" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12" font-weight="600">3. Baja natalidad y crisis jubilatoria</text>
+          <rect x="52" y="292" width="228" height="48" fill="var(--error)"/>
+          <text x="166" y="321" text-anchor="middle" fill="var(--on-error)" font-family="Inter, sans-serif" font-size="12" font-weight="700">Contración económica general</text>
+          <text x="354" y="64" fill="var(--secondary)" font-family="Inter, sans-serif" font-size="14" font-weight="700">CÍRCULO VIRTUOSO DSI + IA</text>
+          <rect x="360" y="88" width="228" height="42" fill="var(--surface-container-low)" stroke="var(--secondary)"/>
+          <text x="474" y="114" text-anchor="middle" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12" font-weight="600">1. IA al servicio del trabajador</text>
+          <rect x="360" y="156" width="228" height="42" fill="var(--surface-container-low)" stroke="var(--secondary)"/>
+          <text x="474" y="182" text-anchor="middle" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12" font-weight="600">2. Bienes esenciales accesibles</text>
+          <rect x="360" y="224" width="228" height="42" fill="var(--surface-container-low)" stroke="var(--secondary)"/>
+          <text x="474" y="250" text-anchor="middle" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12" font-weight="600">3. Expansión de demanda y familias</text>
+          <rect x="360" y="292" width="228" height="48" fill="var(--secondary)"/>
+          <text x="474" y="321" text-anchor="middle" fill="var(--on-secondary)" font-family="Inter, sans-serif" font-size="12" font-weight="700">Prosperidad justa y duradera</text>
+        </svg>`;
+      }
+      if (plateId === `p3`) {
+        return `<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lámina 03">
+          <rect width="640" height="400" fill="var(--surface-container-low)"/>
+          <polygon points="320,38 560,96 80,96" fill="var(--primary)" stroke="var(--outline)" stroke-width="2"/>
+          <text x="320" y="78" text-anchor="middle" fill="var(--on-primary)" font-family="Libre Caslon Text, serif" font-size="15">DESARROLLO HUMANO INTEGRAL Y ECOLOGÍA</text>
+          <rect x="96" y="114" width="136" height="170" fill="var(--background)" stroke="var(--outline)"/>
+          <text x="164" y="195" text-anchor="middle" fill="var(--primary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">BIEN COMÚN</text>
+          <text x="164" y="216" text-anchor="middle" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">Destino Universal</text>
+          <rect x="252" y="114" width="136" height="170" fill="var(--background)" stroke="var(--outline)"/>
+          <text x="320" y="195" text-anchor="middle" fill="var(--secondary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">SUBSIDIARIEDAD</text>
+          <text x="320" y="216" text-anchor="middle" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">Autonomía Local</text>
+          <rect x="408" y="114" width="136" height="170" fill="var(--background)" stroke="var(--outline)"/>
+          <text x="476" y="195" text-anchor="middle" fill="var(--tertiary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">SOLIDARIDAD</text>
+          <text x="476" y="216" text-anchor="middle" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">Justicia Social</text>
+          <rect x="76" y="300" width="488" height="62" fill="var(--primary)" stroke="var(--outline)" stroke-width="2"/>
+          <text x="320" y="328" text-anchor="middle" fill="var(--brass-on-navy)" font-family="Inter, sans-serif" font-size="12" font-weight="700">CIMIENTO: DIGNIDAD INFINITA E IGUALDAD DEL SER HUMANO</text>
+          <text x="320" y="348" text-anchor="middle" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="11">Encíclica Magnifica Humanitas · Opciones preferenciales en la Era Digital</text>
+        </svg>`;
+      }
+      if (plateId === `p4`) {
+        return `<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lámina 04">
+          <rect width="640" height="400" fill="var(--surface-container-low)"/>
+          <line x1="320" y1="200" x2="130" y2="85" stroke="var(--outline)" stroke-width="2"/>
+          <line x1="320" y1="200" x2="510" y2="85" stroke="var(--outline)" stroke-width="2"/>
+          <line x1="320" y1="200" x2="115" y2="200" stroke="var(--outline)" stroke-width="2"/>
+          <line x1="320" y1="200" x2="525" y2="200" stroke="var(--outline)" stroke-width="2"/>
+          <line x1="320" y1="200" x2="145" y2="318" stroke="var(--outline)" stroke-width="2"/>
+          <line x1="320" y1="200" x2="495" y2="318" stroke="var(--outline)" stroke-width="2"/>
+          <circle cx="320" cy="200" r="76" fill="var(--primary)" stroke="var(--outline)" stroke-width="3"/>
+          <text x="320" y="194" text-anchor="middle" fill="var(--on-primary)" font-family="Libre Caslon Text, serif" font-size="14">ESTADO</text>
+          <text x="320" y="213" text-anchor="middle" fill="var(--brass-on-navy)" font-family="Inter, sans-serif" font-size="12" font-weight="700">MUNICIPAL / OSFL</text>
+          <rect x="44" y="55" width="170" height="44" fill="var(--background)" stroke="var(--primary)"/>
+          <text x="129" y="82" text-anchor="middle" fill="var(--primary)" font-family="Inter, sans-serif" font-size="12" font-weight="600">Universidades y Escuelas</text>
+          <rect x="426" y="55" width="170" height="44" fill="var(--background)" stroke="var(--primary)"/>
+          <text x="511" y="82" text-anchor="middle" fill="var(--primary)" font-family="Inter, sans-serif" font-size="12" font-weight="600">Gremios y Trabajadores</text>
+          <rect x="30" y="178" width="160" height="44" fill="var(--background)" stroke="var(--secondary)"/>
+          <text x="110" y="205" text-anchor="middle" fill="var(--secondary)" font-family="Inter, sans-serif" font-size="12" font-weight="600">Ciudadanos Inversores</text>
+          <rect x="450" y="178" width="160" height="44" fill="var(--background)" stroke="var(--secondary)"/>
+          <text x="530" y="205" text-anchor="middle" fill="var(--secondary)" font-family="Inter, sans-serif" font-size="12" font-weight="600">Empresas Locales</text>
+          <rect x="60" y="298" width="170" height="44" fill="var(--background)" stroke="var(--tertiary)"/>
+          <text x="145" y="325" text-anchor="middle" fill="var(--tertiary)" font-family="Inter, sans-serif" font-size="12" font-weight="600">Clubes y Soc. de Fomento</text>
+          <rect x="410" y="298" width="170" height="44" fill="var(--background)" stroke="var(--tertiary)"/>
+          <text x="495" y="325" text-anchor="middle" fill="var(--tertiary)" font-family="Inter, sans-serif" font-size="12" font-weight="600">Iglesias y Fundaciones</text>
+        </svg>`;
+      }
+      if (plateId === `p5`) {
+        return `<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lámina 05">
+          <rect width="640" height="400" fill="var(--surface-container-low)"/>
+          <text x="36" y="54" fill="var(--primary)" font-family="Libre Caslon Text, serif" font-size="18">Esquema Dual de Producción (Base Costo $100)</text>
+          <rect x="36" y="78" width="284" height="190" fill="var(--secondary)" stroke="var(--outline)"/>
+          <text x="54" y="110" fill="var(--on-secondary)" font-family="Inter, sans-serif" font-size="14" font-weight="700">50% SOCIAL GENERAL</text>
+          <text x="54" y="158" fill="var(--on-secondary)" font-family="Libre Caslon Text, serif" font-size="42">$110</text>
+          <text x="54" y="194" fill="var(--on-secondary)" font-family="Inter, sans-serif" font-size="12">Costo ($100) + 5% Trabajador + 5% Cadena</text>
+          <text x="54" y="218" fill="var(--on-secondary)" font-family="Inter, sans-serif" font-size="12">Libera ahorro en familias vulnerables</text>
+          <rect x="332" y="78" width="132" height="190" fill="var(--tertiary)" stroke="var(--outline)"/>
+          <text x="346" y="110" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">20% INVERSOR</text>
+          <text x="346" y="158" fill="var(--on-primary)" font-family="Libre Caslon Text, serif" font-size="38">$155</text>
+          <text x="346" y="194" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="11">Cupo Preferencial</text>
+          <rect x="476" y="78" width="128" height="190" fill="var(--primary)" stroke="var(--outline)"/>
+          <text x="490" y="110" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">30% MERCADO</text>
+          <text x="490" y="158" fill="var(--brass-on-navy)" font-family="Libre Caslon Text, serif" font-size="38">$200</text>
+          <text x="490" y="194" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="11">Retorno Inversor</text>
+          <rect x="36" y="292" width="568" height="72" fill="var(--background)" stroke="var(--outline)" stroke-width="2"/>
+          <text x="54" y="322" fill="var(--primary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">EFECTO MULTIPLICADOR EN LA ECONOMÍA MUNICIPAL:</text>
+          <text x="54" y="346" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="12">Mayor poder adquisitivo + Renta por microinversión sin comisiones → Crece la demanda agregada local.</text>
+        </svg>`;
+      }
+      if (plateId === `p6`) {
+        return `<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lámina 06">
+          <rect width="640" height="400" fill="var(--surface-container-low)"/>
+          <rect x="32" y="38" width="276" height="324" fill="var(--background)" stroke="var(--outline)" stroke-width="2"/>
+          <text x="52" y="72" fill="var(--primary)" font-family="Inter, sans-serif" font-size="14" font-weight="700">ETAPA 1 · PREPARANDO EL CAPULLO</text>
+          <text x="52" y="112" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12">• Tierra: Donada 3 años por Municipio</text>
+          <text x="52" y="146" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12">• Infraestructura móvil: OSFL (≤ 5%)</text>
+          <text x="52" y="180" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12">• Capital: Microaportes ciudadanos</text>
+          <text x="52" y="214" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12">• Trabajo: 70% Univ. / 30% Vecinos</text>
+          <text x="52" y="248" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12">• Tecnología: IA + Robótica donada/local</text>
+          <rect x="52" y="284" width="236" height="52" fill="var(--primary-container)"/>
+          <text x="170" y="315" text-anchor="middle" fill="var(--primary)" font-family="Inter, sans-serif" font-size="12" font-weight="700">Costo inicial cercano a cero</text>
+          <rect x="332" y="38" width="276" height="324" fill="var(--background)" stroke="var(--secondary)" stroke-width="2"/>
+          <text x="352" y="72" fill="var(--secondary)" font-family="Inter, sans-serif" font-size="14" font-weight="700">ETAPA 2 · REGULADOR DSI + IA</text>
+          <text x="352" y="118" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12">App interdisciplinaria (Legal + Contable)</text>
+          <text x="352" y="156" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12">Monitoreo en tiempo real de costos fijos</text>
+          <text x="352" y="194" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12">Alertas preventivas ante desvíos</text>
+          <rect x="352" y="246" width="236" height="90" fill="var(--secondary)"/>
+          <text x="470" y="282" text-anchor="middle" fill="var(--on-secondary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">DECISIÓN HUMANA ÉTICA</text>
+          <text x="470" y="306" text-anchor="middle" fill="var(--on-secondary)" font-family="Inter, sans-serif" font-size="11">La IA alerta; la persona decide con DSI</text>
+        </svg>`;
+      }
+      if (plateId === `p7`) {
+        return `<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lámina 07">
+          <rect width="640" height="400" fill="var(--surface-container-low)"/>
+          <rect x="40" y="42" width="560" height="96" fill="var(--primary)" stroke="var(--outline)" stroke-width="2"/>
+          <text x="320" y="82" text-anchor="middle" fill="var(--on-primary)" font-family="Libre Caslon Text, serif" font-size="18">Trabajador + Unidad Robot IA = Dignidad y Salario Intactos</text>
+          <text x="320" y="112" text-anchor="middle" fill="var(--brass-on-navy)" font-family="Inter, sans-serif" font-size="12">Propuesta Art. 14 Ter · La máquina sirve al hombre; no lo desplaza de su ingreso</text>
+          <rect x="40" y="164" width="174" height="194" fill="var(--background)" stroke="var(--outline)"/>
+          <text x="127" y="198" text-anchor="middle" fill="var(--primary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">1. GUARDIÁN</text>
+          <text x="127" y="226" text-anchor="middle" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">Fondos de resiliencia</text>
+          <text x="127" y="248" text-anchor="middle" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">Redistribución horaria</text>
+          <rect x="233" y="164" width="174" height="194" fill="var(--background)" stroke="var(--outline)"/>
+          <text x="320" y="198" text-anchor="middle" fill="var(--secondary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">2. ESCUELA IA</text>
+          <text x="320" y="226" text-anchor="middle" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">Negociación algorítmica</text>
+          <text x="320" y="248" text-anchor="middle" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">Auditoría sin sesgos</text>
+          <rect x="426" y="164" width="174" height="194" fill="var(--background)" stroke="var(--outline)"/>
+          <text x="513" y="198" text-anchor="middle" fill="var(--tertiary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">3. ACTOR MORAL</text>
+          <text x="513" y="226" text-anchor="middle" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">Cooperativas tech</text>
+          <text x="513" y="248" text-anchor="middle" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">Colaboración crítica</text>
+        </svg>`;
+      }
+      if (plateId === `p8`) {
+        return `<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lámina 08">
+          <rect width="640" height="400" fill="var(--surface-container-low)"/>
+          <rect x="36" y="40" width="268" height="320" fill="var(--surface-container)" stroke="var(--outline-variant)"/>
+          <text x="56" y="76" fill="var(--error)" font-family="Inter, sans-serif" font-size="13" font-weight="700">DEMOCRACIA INDIRECTA (AGOTADA)</text>
+          <text x="56" y="118" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="12">• Se vota al «menos peor»</text>
+          <text x="56" y="152" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="12">• Promesas incumplidas</text>
+          <text x="56" y="186" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="12">• Captura por financistas</text>
+          <text x="56" y="220" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="12">• Listas cerradas sin idoneidad</text>
+          <rect x="336" y="40" width="268" height="320" fill="var(--primary)" stroke="var(--outline)" stroke-width="2"/>
+          <text x="356" y="76" fill="var(--brass-on-navy)" font-family="Inter, sans-serif" font-size="13" font-weight="700">FOROS WEB 3.0 (DIRECTA)</text>
+          <text x="356" y="118" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="12">• Voto de propuestas, no nombres</text>
+          <text x="356" y="152" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="12">• 70% padrón → Ordenanza</text>
+          <text x="356" y="186" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="12">• Priorización presupuestaria</text>
+          <text x="356" y="220" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="12">• 4 Virtudes Cardinales desde 3.º</text>
+          <rect x="356" y="256" width="228" height="80" fill="var(--outline)"/>
+          <text x="470" y="290" text-anchor="middle" fill="var(--primary)" font-family="Inter, sans-serif" font-size="12" font-weight="700">PRUDENCIA · JUSTICIA</text>
+          <text x="470" y="312" text-anchor="middle" fill="var(--primary)" font-family="Inter, sans-serif" font-size="12" font-weight="700">TEMPLANZA · FORTALEZA</text>
+        </svg>`;
+      }
+      if (plateId === `p9`) {
+        return `<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lámina 09">
+          <rect width="640" height="400" fill="var(--surface-container-low)"/>
+          <text x="36" y="54" fill="var(--primary)" font-family="Libre Caslon Text, serif" font-size="18">Patentes Municipales e Industrialización (20 Años)</text>
+          <rect x="36" y="84" width="170" height="90" fill="var(--primary)"/>
+          <text x="121" y="124" text-anchor="middle" fill="var(--on-primary)" font-family="Libre Caslon Text, serif" font-size="28">30%</text>
+          <text x="121" y="150" text-anchor="middle" fill="var(--brass-on-navy)" font-family="Inter, sans-serif" font-size="11" font-weight="700">ESTADO MUNICIPAL</text>
+          <rect x="214" y="84" width="226" height="90" fill="var(--secondary)"/>
+          <text x="327" y="124" text-anchor="middle" fill="var(--on-secondary)" font-family="Libre Caslon Text, serif" font-size="28">40%</text>
+          <text x="327" y="150" text-anchor="middle" fill="var(--on-secondary)" font-family="Inter, sans-serif" font-size="11" font-weight="700">INVERSIÓN CIUDADANA</text>
+          <rect x="448" y="84" width="112" height="90" fill="var(--tertiary)"/>
+          <text x="504" y="124" text-anchor="middle" fill="var(--on-primary)" font-family="Libre Caslon Text, serif" font-size="24">27%</text>
+          <text x="504" y="150" text-anchor="middle" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="10" font-weight="700">EMPRESAS</text>
+          <rect x="568" y="84" width="36" height="90" fill="var(--outline)"/>
+          <text x="586" y="135" text-anchor="middle" fill="var(--primary)" font-family="Inter, sans-serif" font-size="11" font-weight="700">3%</text>
+          <rect x="36" y="206" width="568" height="150" fill="var(--background)" stroke="var(--outline)" stroke-width="2"/>
+          <text x="56" y="242" fill="var(--primary)" font-family="Inter, sans-serif" font-size="13" font-weight="700">LÍMITE ÉTICO IRRENUNCIABLE:</text>
+          <text x="56" y="274" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12">• Protección mundial de patente con producción local exclusiva por 20 años.</text>
+          <text x="56" y="302" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12">• Sociedades mixtas extranjeras 50–50 (con cláusula +1% Estado; 25% Estado / 25% Ciudadanos).</text>
+          <text x="56" y="330" fill="var(--error)" font-family="Inter, sans-serif" font-size="12" font-weight="700">• Rechazo categórico del transhumanismo y posthumanismo: esencia humana intacta.</text>
+        </svg>`;
+      }
+      return `<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lámina 10">
+        <rect width="640" height="400" fill="var(--surface-container-low)"/>
+        <circle cx="220" cy="190" r="110" fill="var(--primary-container)" stroke="var(--primary)" stroke-width="2"/>
+        <circle cx="420" cy="190" r="110" fill="var(--secondary-container)" stroke="var(--secondary)" stroke-width="2"/>
+        <text x="175" y="182" text-anchor="middle" fill="var(--primary)" font-family="Libre Caslon Text, serif" font-size="17">CIENCIA</text>
+        <text x="175" y="204" text-anchor="middle" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">Razón Aplicada + IA</text>
+        <text x="465" y="182" text-anchor="middle" fill="var(--secondary)" font-family="Libre Caslon Text, serif" font-size="17">TEOLOGÍA</text>
+        <text x="465" y="204" text-anchor="middle" fill="var(--on-surface-variant)" font-family="Inter, sans-serif" font-size="11">Fe, Lógica y Milagro</text>
+        <rect x="242" y="156" width="156" height="68" fill="var(--primary)" stroke="var(--outline)" stroke-width="2"/>
+        <text x="320" y="186" text-anchor="middle" fill="var(--brass-on-navy)" font-family="Inter, sans-serif" font-size="12" font-weight="700">CIENCIA TEOLÓGICA</text>
+        <text x="320" y="208" text-anchor="middle" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="11">Tiempo Libre Virtuoso</text>
+        <text x="320" y="346" text-anchor="middle" fill="var(--on-surface)" font-family="Inter, sans-serif" font-size="12" font-weight="600">Familia · Espiritualidad · Artes · Democracia Participativa · Caridad</text>
+      </svg>`;
+    }
+
+    function buildBookCoverSVG() {
+      return `<svg viewBox="0 0 360 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Portada del libro">
+        <rect width="360" height="480" fill="var(--primary)"/>
+        <rect x="16" y="16" width="328" height="448" fill="none" stroke="var(--outline)" stroke-width="2"/>
+        <rect x="24" y="24" width="312" height="432" fill="none" stroke="var(--outline)" stroke-width="0.75"/>
+        <text x="180" y="64" text-anchor="middle" fill="var(--brass-on-navy)" font-family="Inter, sans-serif" font-size="10" font-weight="700" letter-spacing="2">UN NUEVO PARADIGMA EN LA ERA 4.0</text>
+        <text x="180" y="118" text-anchor="middle" fill="var(--on-primary)" font-family="Libre Caslon Text, serif" font-size="26">Desarrollando</text>
+        <text x="180" y="150" text-anchor="middle" fill="var(--on-primary)" font-family="Libre Caslon Text, serif" font-size="26">la IA con DSI</text>
+        <text x="180" y="184" text-anchor="middle" fill="var(--brass-on-navy)" font-family="Libre Caslon Text, serif" font-style="italic" font-size="16">El Renacimiento Económico y Social</text>
+        <circle cx="180" cy="276" r="64" fill="none" stroke="var(--outline)" stroke-width="2"/>
+        <circle cx="180" cy="276" r="44" fill="none" stroke="var(--brass-on-navy)" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="180" y1="226" x2="180" y2="326" stroke="var(--outline)" stroke-width="2"/>
+        <line x1="130" y1="276" x2="230" y2="276" stroke="var(--outline)" stroke-width="2"/>
+        <text x="180" y="388" text-anchor="middle" fill="var(--on-primary)" font-family="Inter, sans-serif" font-size="11" font-weight="600">C. P. N. y Docente</text>
+        <text x="180" y="408" text-anchor="middle" fill="var(--brass-on-navy)" font-family="Libre Caslon Text, serif" font-size="15">Ariel Ivan Montenegro</text>
+        <text x="180" y="440" text-anchor="middle" fill="var(--lede-on-navy)" font-family="Inter, sans-serif" font-size="10">EDICIÓN 2026</text>
+      </svg>`;
+    }
+
+    function buildQRMatrixSVG(seed, labelText) {
+      const size = 21;
+      const cell = 8;
+      const offset = 16;
+      const rects = [];
+
+      const isFinder = function (r, c) {
+        return (r < 7 && c < 7) || (r < 7 && c >= size - 7) || (r >= size - 7 && c < 7);
+      };
+
+      for (let r = 0; r < size; r++) {
+        for (let c = 0; c < size; c++) {
+          if (isFinder(r, c)) continue;
+          const hash = ((r * 31 + c * 17 + seed * 13) ^ (r * c + seed)) % 11;
+          if (hash < 5 || (r === 6 && c % 2 === 0) || (c === 6 && r % 2 === 0)) {
+            rects.push(`<rect x="${offset + c * cell}" y="${offset + r * cell}" width="${cell}" height="${cell}" fill="var(--primary)"/>`);
+          }
+        }
+      }
+
+      const drawFinder = function (x, y) {
+        return `
+          <rect x="${x}" y="${y}" width="${7 * cell}" height="${7 * cell}" fill="var(--primary)"/>
+          <rect x="${x + cell}" y="${y + cell}" width="${5 * cell}" height="${5 * cell}" fill="var(--surface-container-low)"/>
+          <rect x="${x + 2 * cell}" y="${y + 2 * cell}" width="${3 * cell}" height="${3 * cell}" fill="var(--primary)"/>
+        `;
+      };
+
+      return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${labelText}">
+        <rect width="200" height="220" fill="var(--surface-container-low)"/>
+        ${drawFinder(offset, offset)}
+        ${drawFinder(offset + (size - 7) * cell, offset)}
+        ${drawFinder(offset, offset + (size - 7) * cell)}
+        ${rects.join(``)}
+        <text x="100" y="206" text-anchor="middle" fill="var(--primary)" font-family="Inter, sans-serif" font-size="11" font-weight="700">${labelText}</text>
+      </svg>`;
+    }
+
+    function filterPlates(cat) {
+      STATE.category = cat;
+      document.querySelectorAll(`.filter-bar .btn-secondary`).forEach(function (btn) {
+        btn.classList.toggle(`active`, btn.dataset.cat === cat);
+      });
+      renderPlatesGrid();
+    }
+
+    function renderPlatesGrid() {
+      const grid = document.getElementById(`plates-grid`);
+      if (!grid) return;
+
+      const filtered = PLATES.filter(function (p) {
+        return STATE.category === `all` || p.cat === STATE.category;
+      });
+
+      grid.innerHTML = filtered.map(function (p) {
+        const realIdx = PLATES.findIndex(function (x) { return x.id === p.id; });
+        return `<article class="plate-card">
+          <button type="button" class="plate-preview-btn" onclick="openPlateModal(${realIdx})" aria-label="${p.title[STATE.lang]}">
+            <div class="plate-svg-box">${buildPlateSVG(p.id)}</div>
+          </button>
+          <div class="plate-body">
+            <div class="plate-meta">
+              <span class="stamp-tag">Lámina ${p.num}</span>
+              <span class="figure-label">${p.cat}</span>
+            </div>
+            <h3 class="plate-title">${p.title[STATE.lang]}</h3>
+            <p class="plate-desc">${p.desc[STATE.lang]}</p>
+            <div class="plate-actions">
+              <button type="button" class="btn-secondary" onclick="openPlateModal(${realIdx})">
+                <i data-lucide="maximize-2" aria-hidden="true"></i>
+                <span>${t(`enlargeBtn`)}</span>
+              </button>
+            </div>
+          </div>
+        </article>`;
+      }).join(``);
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function renderBookCover() {
+      const mount = document.getElementById(`book-cover-mount`);
+      if (mount) mount.innerHTML = buildBookCoverSVG();
+    }
+
+    function renderQRGrid() {
+      const grid = document.getElementById(`qr-grid`);
+      if (!grid) return;
+
+      grid.innerHTML = QR_ITEMS.map(function (item, idx) {
+        const modalIdx = 11 + idx;
+        return `<article class="qr-card">
+          <span class="stamp-tag">${item.badge}</span>
+          <h3 class="plate-title">${item.title[STATE.lang]}</h3>
+          <button type="button" class="qr-matrix-btn" onclick="openPlateModal(${modalIdx})" aria-label="${item.title[STATE.lang]}">
+            ${buildQRMatrixSVG(item.seed, item.badge)}
+          </button>
+          <p class="plate-desc">${item.desc[STATE.lang]}</p>
+          <div class="qr-ref-box">${item.ref}</div>
+          <button type="button" class="btn-secondary" onclick="copyQRRef(${idx})">
+            <i data-lucide="copy" aria-hidden="true"></i>
+            <span>${t(`copyRefBtn`)}</span>
+          </button>
+          <div class="copy-feedback" id="qr-fb-${idx}" aria-live="polite"></div>
+        </article>`;
+      }).join(``);
+
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function copyQRRef(idx) {
+      const item = QR_ITEMS[idx];
+      if (!item) return;
+      const fb = document.getElementById(`qr-fb-${idx}`);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(item.ref).catch(function () {});
+      }
+      if (fb) {
+        fb.textContent = t(`copiedMsg`);
+        setTimeout(function () { fb.textContent = ``; }, 2400);
+      }
+    }
+
+    function togglePledge(id) {
+      const i = STATE.pledges.indexOf(id);
+      if (i >= 0) {
+        STATE.pledges.splice(i, 1);
+      } else {
+        STATE.pledges.push(id);
+      }
+      renderPledges();
+    }
+
+    function renderPledges() {
+      const grid = document.getElementById(`pledge-grid`);
+      if (!grid) return;
+      grid.innerHTML = PLEDGE_AREAS.map(function (area) {
+        const sel = STATE.pledges.indexOf(area.id) >= 0;
+        return `<button type="button" class="pledge-btn${sel ? ` selected` : ``}" onclick="togglePledge('${area.id}')">
+          <span>${sel ? `[x]` : `[ ]`}</span>
+          <span>${area[STATE.lang]}</span>
+        </button>`;
+      }).join(``);
+    }
+
+    function copyDiffusionMessage() {
+      const selectedNames = PLEDGE_AREAS.filter(function (a) {
+        return STATE.pledges.indexOf(a.id) >= 0;
+      }).map(function (a) { return a[STATE.lang]; }).join(`, `);
+
+      const msg = `${t(`heroTitle`).replace(/<[^>]+>/g, ``)} — ${t(`diffQuote`)} (${selectedNames})`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(msg).catch(function () {});
+      }
+      const fb = document.getElementById(`diffusion-feedback`);
+      if (fb) {
+        fb.textContent = t(`copiedMsg`);
+        setTimeout(function () { fb.textContent = ``; }, 2600);
+      }
+    }
+
+    function openPlateModal(index) {
+      STATE.modalIndex = index;
+      STATE.zoom = 1;
+      const modal = document.getElementById(`plate-modal`);
+      if (!modal) return;
+      modal.classList.add(`open`);
+      renderModalContent();
+      setModalZoom(1);
+    }
+
+    function closePlateModal() {
+      const modal = document.getElementById(`plate-modal`);
+      if (modal) modal.classList.remove(`open`);
+    }
+
+    function stepModal(delta) {
+      const total = 14;
+      STATE.modalIndex = (STATE.modalIndex + delta + total) % total;
+      STATE.zoom = 1;
+      renderModalContent();
+      setModalZoom(1);
+    }
+
+    function setModalZoom(scale) {
+      STATE.zoom = scale;
+      const canvas = document.getElementById(`modal-canvas`);
+      if (canvas) {
+        canvas.style.width = `${Math.round(100 * scale)}%`;
+        canvas.style.maxWidth = `${Math.round(920 * scale)}px`;
+      }
+      [`zoom-100`, `zoom-135`, `zoom-175`].forEach(function (id) {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        const target = id === `zoom-100` ? 1 : id === `zoom-135` ? 1.35 : 1.75;
+        btn.classList.toggle(`active`, scale === target);
+      });
+    }
+
+    function renderModalContent() {
+      const idx = STATE.modalIndex;
+      const kicker = document.getElementById(`modal-kicker`);
+      const title = document.getElementById(`modal-title`);
+      const catTag = document.getElementById(`modal-cat-tag`);
+      const desc = document.getElementById(`modal-desc`);
+      const points = document.getElementById(`modal-points`);
+      const canvas = document.getElementById(`modal-canvas`);
+      if (!kicker || !title || !catTag || !desc || !points || !canvas) return;
+
+      if (idx < 10) {
+        const p = PLATES[idx];
+        kicker.textContent = `Lámina ${p.num} / 10`;
+        title.textContent = p.title[STATE.lang];
+        catTag.textContent = p.cat;
+        desc.textContent = p.desc[STATE.lang];
+        points.innerHTML = p.points[STATE.lang].map(function (pt) {
+          return `<li>${pt}</li>`;
+        }).join(``);
+        canvas.innerHTML = buildPlateSVG(p.id);
+      } else if (idx === 10) {
+        kicker.textContent = `Edición 2026`;
+        title.textContent = t(`bookTitleShort`);
+        catTag.textContent = `Portada Oficial`;
+        desc.textContent = t(`bookSummary`);
+        points.innerHTML = `<li>C. P. N. y Docente Ariel Ivan Montenegro</li><li>Doctrina Social de la Iglesia &amp; Era 4.0</li>`;
+        canvas.innerHTML = buildBookCoverSVG();
+      } else {
+        const q = QR_ITEMS[idx - 11];
+        kicker.textContent = q.badge;
+        title.textContent = q.title[STATE.lang];
+        catTag.textContent = `QR Oficial`;
+        desc.textContent = q.desc[STATE.lang];
+        points.innerHTML = `<li>${q.ref}</li>`;
+        canvas.innerHTML = buildQRMatrixSVG(q.seed, q.badge);
+      }
+    }
+
+    document.addEventListener(`keydown`, function (e) {
+      const modal = document.getElementById(`plate-modal`);
+      if (!modal || !modal.classList.contains(`open`)) return;
+      if (e.key === `Escape`) closePlateModal();
+      if (e.key === `ArrowRight`) stepModal(1);
+      if (e.key === `ArrowLeft`) stepModal(-1);
+    });
+
+    document.addEventListener(`DOMContentLoaded`, function () {
+      setLanguage(`es`);
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
